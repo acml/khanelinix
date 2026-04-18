@@ -80,6 +80,10 @@
         pre-commit-hooks.follows = "";
       };
     };
+    emacs-overlay = {
+      url = "github:nix-community/emacs-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     khanelivim = {
       url = "github:khaneliman/khanelivim";
       inputs = {

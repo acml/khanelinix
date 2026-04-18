@@ -42,7 +42,10 @@ in
 {
   flake = {
     overlays = dynamicOverlaysSet // {
-      default = khanelinixPackagesOverlay;
+      default = lib.composeManyExtensions [
+        inputs.emacs-overlay.overlays.default
+        khanelinixPackagesOverlay
+      ];
       firefox-addons = inputs.firefox-addons.overlays.default;
     };
   };

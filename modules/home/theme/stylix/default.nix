@@ -201,6 +201,7 @@ in
           bat.enable = !(isThemedBy "bat");
           btop.enable = !(isThemedBy "btop");
           cava.enable = !(isThemedBy "cava");
+          emacs.enable = false;
           fish.enable = !(isThemedBy "fish");
           foot.enable = !(isThemedBy "foot");
           fzf.enable = !(isThemedBy "fzf");

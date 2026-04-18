@@ -1,0 +1,1259 @@
+;;; $DOOMDIR/config.el --- My personal configuration -*- lexical-binding: t; -*-
+;;; Commentary:
+
+;;; Code:
+;; Place your private configuration here! Remember, you do not need to run 'doom
+;; sync' after modifying this file!
+
+(use-package! compile-angel
+  :demand t
+  :config
+  ;; Set `compile-angel-verbose' to nil to disable compile-angel messages.
+  ;; (When set to nil, compile-angel won't show which file is being compiled.)
+  (setq compile-angel-verbose t)
+
+  ;; Uncomment the line below to compile automatically when an Elisp file is saved
+  ;; (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode)
+
+  ;; The following directive prevents compile-angel from compiling your init
+  ;; files. If you choose to remove this push to `compile-angel-excluded-files'
+  ;; and compile your pre/post-init files, ensure you understand the
+  ;; implications and thoroughly test your code. For example, if you're using
+  ;; the `use-package' macro, you'll need to explicitly add:
+  ;; (eval-when-compile (require 'use-package))
+  ;; at the top of your init file.
+  (push "/init.el" compile-angel-excluded-files)
+  (push "/early-init.el" compile-angel-excluded-files)
+  (push "/evil-easymotion.el" compile-angel-excluded-files)
+  (push "/evil-markdown.el" compile-angel-excluded-files)
+
+  ;; A global mode that compiles .el files before they are loaded
+  ;; using `load' or `require'.
+  (compile-angel-on-load-mode 1))
+
+;; Some functionality uses this to identify you, e.g. GPG configuration, email
+;; clients, file templates and snippets.
+(setq user-full-name "Ahmet Cemal Özgezer"
+      user-mail-address "ozgezer@gmail.com"
+
+      ;; There are two ways to load a theme. Both assume the theme is installed and
+      ;; available. You can either set `doom-theme' or manually load a theme with the
+      ;; `load-theme' function. This is the default:
+      doom-theme (if (display-graphic-p) 'ef-eagle 'ef-dark)
+      ;; modus-operandi modus-vivendi doom-one doom-gruvbox doom-tomorrow-night
+
+      ;; This determines the style of line numbers in effect. If set to `nil', line
+      ;; numbers are disabled. For relative line numbers, set this to `relative'.
+      ;;
+      ;; Line numbers are pretty slow all around. The performance boost of
+      ;; disabling them outweighs the utility of always keeping them on.
+      display-line-numbers-type 'relative
+
+      ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
+      ;; are the three important ones:
+      ;;
+      ;; + `doom-font'
+      ;; + `doom-variable-pitch-font'
+      ;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
+      ;;   presentations or streaming.
+      ;;
+      ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
+      ;; font string. You generally only need these two:
+      doom-font (font-spec :family "Iosevka Comfy" :size (cond ((featurep :system 'macos) 13.0)
+                                                               ((string= (system-name) "dinm5CG52813LW") 10.8)
+                                                               (t 12.0)))
+      doom-big-font (font-spec :family "Iosevka Comfy" :size (if (featurep :system 'macos) 26.0 20.0))
+      doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size (cond ((featurep :system 'macos) 13.0)
+                                                                                   ((string= (system-name) "dinm5CG52813LW") 10.8)
+                                                                                   (t 12.0)))
+      doom-serif-font (font-spec :family "BlexMono Nerd Font" :size (if (featurep :system 'macos) 13.0 12.0) :weight 'light)
+
+      fancy-splash-image (funcall
+                          (lambda (choices) (elt
+                                        choices (random (length choices))))
+                          (directory-files (concat (expand-file-name
+                                                    doom-user-dir) "splash")
+                                           t "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)" t))
+
+      auth-source-cache-expiry nil ; default is 7200 (2h)
+
+      delete-by-moving-to-trash t  ; Delete files to trash
+      window-combination-resize t  ; take new window space from all other windows (not just current)
+      x-stretch-cursor t           ; Stretch cursor to the glyph width
+      undo-limit 80000000          ; Raise undo-limit to 80Mb
+      auto-save-default t          ; Nobody likes to loose work, I certainly don't
+      truncate-string-ellipsis "…" ; Unicode ellispis are nicer than "...", and also save /precious/ space
+      window-resize-pixelwise t
+      frame-resize-pixelwise t
+      xref-history-storage 'xref-window-local-history)
+
+;; (if (equal "Battery status not available"
+;;            (battery))
+;;     (display-battery-mode 1)                        ; On laptops it's nice to know how much power you have
+;;   (setq password-cache-expiry nil))               ; I can trust my desktops ... can't I? (no battery = desktop)
+
+(global-subword-mode 1)                           ; Iterate through CamelCase words
+
+(setq-default custom-file (expand-file-name "custom.el" doom-local-dir))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
+;; Whenever you reconfigure a package, make sure to wrap your config in an
+;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
+;;
+;;   (after! PACKAGE
+;;     (setq x y))
+;;
+;; The exceptions to this rule:
+;;
+;;   - Setting file/directory variables (like `org-directory')
+;;   - Setting variables which explicitly tell you to set them before their
+;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
+;;   - Setting doom variables (which start with 'doom-' or '+').
+;;
+;; Here are some additional functions/macros that will help you configure Doom.
+;;
+;; - `load!' for loading external *.el files relative to this one
+;; - `use-package!' for configuring packages
+;; - `after!' for running code after a package has loaded
+;; - `add-load-path!' for adding directories to the `load-path', relative to
+;;   this file. Emacs searches the `load-path' when you load packages with
+;;   `require' or `use-package'.
+;; - `map!' for binding new keys
+;;
+;; To get information about any of these functions/macros, move the cursor over
+;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
+;; This will open documentation for it, including demos of how they are used.
+;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
+;; etc).
+;;
+;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+;; they are implemented.
+
+(custom-set-faces!
+  '(aw-leading-char-face
+    :foreground "white" :background "red"
+    :weight bold :height 2.5 :box (:line-width 10 :color "red")))
+
+;; to hide autosave file from recent files
+(after! recentf
+  (add-to-list 'recentf-exclude doom-local-dir))
+
+(when (daemonp)
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+              (with-selected-frame frame
+                (if (not (display-graphic-p))
+                    (load-theme 'catppuccin t)
+                  (load-theme 'ef-eagle t)
+                  (set-frame-parameter (selected-frame) 'fullscreen 'maximized))))))
+
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+;; Directional window-selection routines
+(use-package! windmove
+  :config
+  (windmove-default-keybindings '(shift))
+  (windmove-swap-states-default-keybindings '(shift ctrl))
+  :custom
+  (windmove-wrap-around t))
+
+;; (add-hook 'org-shiftup-final-hook 'windmove-up)
+;; (add-hook 'org-shiftleft-final-hook 'windmove-left)
+;; (add-hook 'org-shiftdown-final-hook 'windmove-down)
+;; (add-hook 'org-shiftright-final-hook 'windmove-right)
+
+(use-package winum
+  :after-call doom-switch-window-hook
+  :config
+  ;; (setq winum-scope 'frame-local)
+  ;; (winum-mode +1)
+  (dolist (wn (seq-map 'number-to-string (number-sequence 1 9)))
+    (let ((f (intern (concat "winum-select-window-" wn)))
+          (k (concat "s-" wn)))
+      (map! :n k f)
+      (map! :leader :n wn f
+            :n (concat "w" wn) f)
+      (global-set-key (kbd k) f))))
+
+;; Simple is Emacs's built-in miscellaneous package.
+(use-package simple
+  :config
+  (bind-keys
+   ;; ([remap just-one-space] . cycle-spacing)
+   ([remap upcase-word] . upcase-dwim)
+   ([remap downcase-word] . downcase-dwim)
+   ([remap capitalize-word] . capitalize-dwim)
+   ([remap zap-to-char] . zap-up-to-char)))
+
+(when (fboundp 'repeat-mode)
+  (add-hook 'after-init-hook 'repeat-mode))
+
+(set-popup-rules! '(("^\\*info\\*" :size 82 :side right :select t :quit t)
+                    ("^\\*\\(?:Wo\\)?Man " :size 82 :side right :select t :quit t)))
+
+(after! avy
+  (setq avy-all-windows 'all-frames
+        avy-all-windows-alt nil
+        avy-keys '(?a ?r ?s ?t ?d ?h ?n ?e ?i ?o ?w ?f ?p ?l ?u ?y)))
+
+(use-package! beginend
+  :hook (after-init . beginend-global-mode))
+
+;; WSL specific setting
+(when (and (featurep :system 'linux)
+           (getenv "WSL_DISTRO_NAME"))
+  ;; teach Emacs how to open links with your default browser
+  (let ((cmd-exe "/mnt/c/Windows/System32/cmd.exe")
+        (cmd-args '("/c" "start")))
+    (when (file-exists-p cmd-exe)
+      (setq browse-url-generic-program  cmd-exe
+            browse-url-generic-args     cmd-args
+            browse-url-browser-function 'browse-url-generic
+            search-web-default-browser 'browse-url-generic))))
+
+(after! calendar
+  (setq calendar-location-name "Istanbul, Turkey"
+        calendar-latitude 41.168602
+        calendar-longitude 29.047024))
+
+(add-hook! 'c-mode-common-hook
+  (google-set-c-style)
+  (c-set-offset 'access-label -2)
+  (google-make-newline-indent))
+
+(after! ccls
+  (setq ccls-initialization-options `(:index (:comments 2)
+                                             :completion (:detailedLabel t)
+                                             :cache (:directory ,(file-truename "~/.cache/ccls")))))
+
+(defadvice! compile (before ad-compile-smart activate)
+  "Advises `compile' so it sets the argument COMINT to t."
+  (ad-set-arg 1 t))
+
+(add-hook! 'shell-mode-hook #'compilation-shell-minor-mode)
+
+(after! compile
+  (setq compilation-scroll-output t
+        next-error-message-highlight t))
+(add-hook! 'next-error-hook #'recenter)
+
+(use-package! daemons
+  :commands (daemons daemons-disable daemons-enable daemons-reload daemons-restart daemons-start daemons-status daemons-stop)
+  :config
+  (require 'evil-collection-daemons)
+  (evil-collection-define-key '(normal visual) 'daemons-mode-map
+    "e" 'daemons-enable-at-point
+    "d" 'daemons-disable-at-point
+    "u" 'daemons-systemd-toggle-user)
+  (evil-collection-define-key '(normal visual) 'daemons-output-mode-map
+    "e" 'daemons-enable-at-point
+    "d" 'daemons-disable-at-point
+    "u" 'daemons-systemd-toggle-user))
+
+(use-package! dired
+  :config
+  (setq dired-listing-switches (concat dired-listing-switches " --time-style=long-iso")))
+
+(use-package! dired-auto-readme
+  :config
+  (setq dired-auto-readme-separator "\n"))
+
+(use-package! page-break-lines)
+(add-hook! 'dired-auto-readme-mode-hook #'page-break-lines-mode)
+
+(defadvice! acml/dired-auto-readme--enable (fn &rest args)
+  :around #'dired-auto-readme--enable
+  (let ((visible (dirvish-side--session-visible-p)))
+    (unless (eq visible (selected-window))
+      (advice-add 'dired-revert :override #'ignore)
+      (apply fn args)
+      (advice-remove 'dired-revert #'ignore))))
+
+(defadvice! acml/dirvish-subtree-toggle (fn &rest args)
+  :around #'dirvish-subtree-toggle (save-excursion (apply fn args)))
+
+(after! dirvish
+  (setq dirvish-attributes (append
+                            ;; The order of these attributes is insignificant, they are always
+                            ;; displayed in the same position.
+                            '(vc-state subtree-state nerd-icons collapse)
+                            ;; Other attributes are displayed in the order they appear in this list.
+                            ;; '(git-msg file-modes file-time file-size)
+                            '(file-size))
+        dirvish-side-attributes '(vc-state nerd-icons collapse ;; file-size
+                                           )
+        dirvish-header-line-format '(:left (path) :right (free-space))
+        dirvish-hide-details '(dired dirvish dirvish-side)
+        dirvish-hide-cursor '(dired dirvish dirvish-side)
+        dirvish-path-separators (list (format "  %s " (nerd-icons-codicon "nf-cod-home"))
+                                      (format "  %s " (nerd-icons-codicon "nf-cod-root_folder"))
+                                      (format " %s " (nerd-icons-faicon "nf-fa-angle_right")))
+        dirvish-quick-access-entries '(("h" "~/"                          "Home")
+                                       ("b" "~/Documents/"                "Documents")
+                                       ("d" "~/Downloads/"                "Downloads")
+                                       ("m" "/mnt/"                       "Drives")
+                                       ("n" "~/.nix-config/"              "Nix")
+                                       ("p" "~/Projects/"                 "Projects")
+                                       ("t" "~/.local/share/Trash/files/" "TrashCan")
+                                       ("w" "~/Work/"                     "Work"))
+        dirvish-subtree-prefix "  "
+        dirvish-subtree-state-style 'nerd)
+  ;; (dirvish-peek-mode)
+  (dirvish-side-follow-mode)
+  (add-hook! 'dirvish-setup-hook #'dired-auto-readme-mode))
+
+(after! dirvish-side
+  (setq dirvish-side-display-alist
+        '((side . right) (slot . -1))))
+
+(use-package! dwim-shell-command
+  :bind (([remap shell-command] . dwim-shell-command)
+         :map dired-mode-map
+         ([remap dired-do-async-shell-command] . dwim-shell-command)
+         ([remap dired-do-shell-command] . dwim-shell-command)
+         ([remap dired-smart-shell-command] . dwim-shell-command))
+  :config
+  ;; Also make available all the utility functions provided by Xenodium
+  (require 'dwim-shell-commands))
+
+(after! eglot
+  ;; (set-eglot-client! '(c-mode c-ts-mode c++-mode c++-ts-mode objc-mode) `("ccls" ,(concat "--init={\"cache\": {\"directory\": \"" (file-truename "~/.cache/ccls") "\"}}")))
+  (set-eglot-client! 'nix-mode '("nil" "--stdio" :initializationOptions (:nil (:nix (:flake (:autoArchive t)))))))
+
+;; Easier to match with a bspwm rule:
+;;   bspc rule -a 'Emacs:emacs-everywhere' state=floating sticky=on
+(setq emacs-everywhere-frame-name-format "emacs-everywhere")
+
+;; The modeline is not useful to me in the popup window. It looks much nicer
+;; to hide it.
+(add-hook 'emacs-everywhere-init-hooks #'hide-mode-line-mode)
+
+;; Semi-center it over the target window, rather than at the cursor position
+;; (which could be anywhere).
+(defadvice! my-emacs-everywhere-set-frame-position (&rest _)
+  :override #'emacs-everywhere-set-frame-position
+  (cl-destructuring-bind (width . height)
+      (alist-get 'outer-size (frame-geometry))
+    (set-frame-position (selected-frame)
+                        (+ emacs-everywhere-window-x
+                           (/ emacs-everywhere-window-width 2)
+                           (- (/ width 2)))
+                        (+ emacs-everywhere-window-y
+                           (/ emacs-everywhere-window-height 2)))))
+
+(setq prefix-help-command #'embark-prefix-help-command)
+(after! vertico-multiform
+  (add-to-list 'vertico-multiform-categories '(embark-keybinding grid)))
+
+(use-package! exercism :commands (exercism)
+              :init
+              (map! (:leader :desc "Exercism" :n "ox" #'exercism))
+              :config
+              (setq exercism-directory "~/Projects/exercism"))
+
+(after! evil
+  (setq
+   ;; x-select-enable-clipboard nil   ; yanking to the system clipboard crashes emacs (emacsPgtkNativeComp)
+   evil-want-fine-undo t       ; By default while in insert all changes are one big blob. Be more granular
+   evil-vsplit-window-right t  ; Switch to the new window after splitting
+   evil-split-window-below t))
+
+(use-package! evil-colemak-basics :disabled
+              :after evil evil-snipe
+              ;; :hook (ediff-keymap-setup-hook . evil-colemak-basics-mode)
+              :init
+              (setq evil-colemak-basics-rotate-t-f-j nil
+                    evil-colemak-basics-char-jump-commands 'evil-snipe)
+              :config
+              (global-evil-colemak-basics-mode))
+
+;; :ui window-select settings, ignoring +numbers flag for now
+(after! ace-window
+  (setq aw-keys '(?a ?r ?s ?t ?d ?h ?n ?e ?i ?o ?w ?f ?p ?l ?u ?y)))
+
+(use-package! ef-themes
+  ;; :bind ("<f5>" . ef-themes-toggle)
+  :custom
+  (ef-themes-to-toggle '(ef-eagle ef-dark))
+  (ef-themes-variable-pitch-ui t)
+  (ef-themes-mixed-fonts t)
+  ;; (ef-themes-headings '((0 1.4) (1 1.3) (2 1.2) (3 1.1)))
+  :init
+  ;; Remove the border
+  (setq modus-themes-common-palette-overrides
+        '(;; (fringe unspecified)
+          (border-mode-line-active unspecified)
+          (border-mode-line-inactive unspecified)))
+  (load-theme (if (display-graphic-p) 'ef-eagle 'ef-dark) t))
+
+(after! expand-region
+  (define-key evil-visual-state-map (kbd "v") 'er/expand-region))
+
+(use-package! highlight-parentheses
+  :init
+  (setq highlight-parentheses-delay 0.2)
+  :config
+  (set-face-attribute 'hl-paren-face nil :weight 'ultra-bold)
+  :hook
+  (prog-mode . highlight-parentheses-mode))
+
+(after! indent-bars
+  (setq
+   indent-bars-color '(highlight :face-bg t :blend 0.15)
+   indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 1) ; blend=1: blend with BG only
+   indent-bars-highlight-current-depth '(:blend 0.5) ; pump up the BG blend on current
+   ;; indent-bars-pattern "."
+   indent-bars-starting-column nil
+   indent-bars-width-frac 0.1))
+
+(use-package! journalctl-mode :commands (journalctl))
+
+(use-package! ll-debug
+  :commands (ll-debug-comment-region-or-line ll-debug-copy-and-comment-region-or-line ll-debug-insert ll-debug-mode
+                                             ll-debug-revert ll-debug-toggle-comment-region-or-line
+                                             ll-debug-uncomment-region-or-line)
+  :config
+  (setcdr (assq 'c++-mode ll-debug-statement-alist)
+          (cdr (assq 'c-mode ll-debug-statement-alist))))
+
+(after! lsp-go
+  (lsp-register-custom-settings
+   '(("gopls.staticcheck" t t))))
+
+(after! lsp-mode
+  (setq lsp-enable-file-watchers t
+        lsp-file-watch-threshold 15000
+        lsp-lens-enable nil
+        lsp-semantic-tokens-enable t
+        lsp-signature-render-documentation t
+        lsp-headerline-breadcrumb-enable t))
+
+(after! lsp-ui
+  (setq lsp-ui-doc-enable nil ; fixes the LSP lag
+        lsp-ui-doc-include-signature t
+        lsp-ui-doc-max-height 50
+        lsp-ui-doc-max-width 150
+        lsp-ui-doc-position 'bottom
+        lsp-ui-doc-use-childframe t
+        lsp-ui-sideline-show-hover t
+        lsp-ui-sideline-show-symbol t))
+
+;; https://stackoverflow.com/questions/730751/hiding-m-in-emacs
+(defun acml/hide-dos-eol ()
+  "Do not show ^M in files containing mixed UNIX and DOS line endings."
+  (interactive)
+  (setq buffer-display-table (make-display-table))
+  (aset buffer-display-table ?\^M []))
+
+;; https://newbedev.com/how-do-i-display-ansi-color-codes-in-emacs-for-any-mode
+(defun acml/ansi-color ()
+  "Color the ANSI escape sequences in the active region or whole buffer.
+Sequences start with an escape \033 (typically shown as \"^[\")
+and end with \"m\", e.g. this is two sequences
+  ^[[46;1mTEXT^[[0m
+where the first sequence says to display TEXT as bold with
+a cyan background and the second sequence turns it off.
+
+This strips the ANSI escape sequences and if the buffer is saved,
+the sequences will be lost."
+  (interactive)
+  (let (beg end
+            (ansi-color-context-region nil))
+    (if (use-region-p)
+        (setq beg (region-beginning) end (region-end))
+      (setq beg (point-min) end (point-max))))
+  (if buffer-read-only
+      ;; read-only buffers may be pointing a read-only file system, so don't mark the buffer as
+      ;; modified. If the buffer where to become modified, a warning will be generated when emacs
+      ;; tries to autosave.
+      (let ((inhibit-read-only t)
+            (modified (buffer-modified-p)))
+        (ansi-color-apply-on-region beg end t)
+        (set-buffer-modified-p modified))
+    (ansi-color-apply-on-region (point-min) (point-max) t)))
+
+(add-hook 'find-file-hook #'acml/render-log)
+(defun acml/render-log ()
+  (when (and (stringp buffer-file-name)
+             (string-match "\\.log\\'" buffer-file-name))
+    (acml/hide-dos-eol)
+    (acml/ansi-color)))
+
+;; (setq-default left-fringe-width 8
+;;               right-fringe-width 8)
+
+;;; :tools magit
+(add-hook! 'magit-mode-hook
+  (setq-local
+   left-fringe-width 16
+   magit-section-visibility-indicator (if (display-graphic-p)
+                                          '(magit-fringe-bitmap> . magit-fringe-bitmapv)
+                                        (cons (if (char-displayable-p ?) "" "...") t))))
+
+(after! magit
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-worktrees
+                          'magit-insert-status-headers t)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-ignored-files
+                          'magit-insert-untracked-files
+                          nil)
+
+  (setq magit-repolist-columns
+        '(("Name" 24 magit-repolist-column-ident nil)
+          ("Version" 58 magit-repolist-column-version
+           ((:sort magit-repolist-version<)))
+          ("Status" 6 magit-repolist-column-flag
+           ((:right-align t)))
+          ("B<U" 4 magit-repolist-column-unpulled-from-upstream
+           ((:right-align t)
+            (:sort <)
+            (:help-echo "Upstream changes not in branch")))
+          ("B>U" 4 magit-repolist-column-unpushed-to-upstream
+           ((:right-align t)
+            (:pad-right 2)
+            (:sort <)
+            (:help-echo "Local changes not in upstream")))
+          ("Path" 0 magit-repolist-column-path nil))))
+
+(setopt magit-format-file-function #'magit-format-file-nerd-icons)
+
+(setq magit-repository-directories '(("~/.nix-config" . 0)
+                                     ("~/.nixpkgs" . 0)
+                                     ("~/Projects" . 3))
+      magit-save-repository-buffers nil
+      ;; Don't restore the wconf after quitting magit, it's jarring
+      magit-inhibit-save-previous-winconf t
+      transient-values '((magit-rebase "--autostash" "--autosquash")
+                         (magit-pull "--autostash" "--rebase")))
+
+(use-package! magit-todos
+  :after magit
+  :config (magit-todos-mode 1))
+
+(map! :leader
+      (:prefix ("p" . "project")
+               :desc "List project todos" "t" #'magit-todos-list))
+
+(use-package! git-commit
+  :config
+  (setq git-commit-summary-max-length 68))
+
+(use-package! gptel-magit
+  :after gptel magit
+  :if (not (string= (system-name) "dinm5CG52813LW"))
+  :config
+  ;; (setq gptel-magit-model 'google/gemini-2.0-flash-exp:free
+  ;;       gptel-magit-backend (gptel-make-openai "OpenRouter"
+  ;;                             :host "openrouter.ai"
+  ;;                             :endpoint "/api/v1/chat/completions"
+  ;;                             :stream t
+  ;;                             :key #'gptel-api-key-from-auth-source
+  ;;                             :models '(google/gemini-2.0-flash-exp:free)))
+  )
+
+(defvar elken/mixed-pitch-modes '(org-mode LaTeX-mode markdown-mode gfm-mode Info-mode)
+  "Only use `mixed-pitch-mode' for given modes.")
+
+(defun init-mixed-pitch-h ()
+  "Hook `mixed-pitch-mode' into each mode of `elken/mixed-pitch-modes'"
+  (when (memq major-mode elken/mixed-pitch-modes)
+    (mixed-pitch-mode 1))
+  (dolist (hook elken/mixed-pitch-modes)
+    (add-hook (intern (concat (symbol-name hook) "-hook")) #'mixed-pitch-mode)))
+
+(add-hook 'doom-init-ui-hook #'init-mixed-pitch-h)
+
+(add-hook! markdown-mode
+  (add-hook! before-save :local #'markdown-toc-refresh-toc))
+
+(use-package! modus-themes
+  :disabled
+  :init
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil
+        modus-themes-mixed-fonts t
+        modus-themes-variable-pitch-ui t
+        modus-themes-custom-auto-reload t)
+  ;; :bind ("<f5>" . modus-themes-toggle)
+  )
+
+(map! (:leader :desc "Obvious (Toggle Comments)" :n "to" #'obvious-mode))
+
+(use-package! deft
+  :after org
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory org-roam-directory))
+
+;; (use-package! org-appear
+;;   :hook (org-mode . org-appear-mode)
+;;   :config
+;;   (setq org-appear-autoemphasis t
+;;         org-appear-autosubmarkers t
+;;         org-appear-autolinks nil)
+;;   ;; for proper first-time setup, `org-appear--set-elements'
+;;   ;; needs to be run after other hooks have acted.
+;;   (run-at-time nil nil #'org-appear--set-elements))
+
+(use-package! org-block-capf :after org)
+(add-hook! 'org-mode-hook #'org-block-capf-add-to-completion-at-point-functions)
+
+(use-package! org-glossary
+  :hook (org-mode . org-glossary-mode))
+
+(setq
+ ;; If you use `org' and don't want your org files in the default location below,
+ ;; change `org-directory'. It must be set before org loads!
+ org-directory (expand-file-name "~/Documents/org/")
+ org-startup-with-inline-images t)
+
+(use-package! org
+  :config
+  (setq
+   org-hide-emphasis-markers t
+   org-agenda-files (list org-directory  (expand-file-name "~/Documents/worg/"))
+   org-ellipsis (if (and (display-graphic-p) (char-displayable-p ?)) " " nil)
+   org-startup-folded 'show2levels)
+  (add-to-list 'org-modules 'org-habit))
+
+(use-package! ox-latex
+  :after org
+  :config
+  (setq org-latex-pdf-process
+        '("tectonic -X compile --outdir=%o -Z shell-escape -Z continue-on-errors %f")))
+
+;; (use-package! pdf-occur :commands (pdf-occur pdf-occur-global-minor-mode))
+;; (use-package! pdf-history :commands (pdf-history-minor-mode))
+;; (use-package! pdf-links :commands (pdf-links-isearch-link pdf-links-action-perform pdf-links-minor-mode))
+;; (use-package! pdf-outline :commands (pdf-outline pdf-outline-minor-mode))
+;; (use-package! pdf-annot :commands (pdf-annot-minor-mode))
+;; (use-package! pdf-sync :commands (pdf-sync-minor-mode))
+
+(defun lkn-tab-bar--workspaces ()
+  "Return a list of the current workspaces."
+  (tab-bar-mode t)
+  (nreverse
+   (let ((show-help-function nil)
+         (persps (+workspace-list-names))
+         (persp (+workspace-current-name)))
+     (when (<= 1 (length persps))
+       (seq-reduce
+        (lambda (acc elm)
+          (let* ((face (if (equal persp elm)
+                           'tab-bar-tab
+                         'tab-bar-tab-inactive))
+                 (pos (1+ (cl-position elm persps)))
+                 (edge-x (get-text-property 0 'edge-x (car acc)))
+                 (tab-id (format " %d" pos))
+                 (tab-name (format " %s " elm)))
+            (push
+             (concat
+              (propertize tab-id
+                          'id pos
+                          'name elm
+                          'edge-x (+ edge-x (string-pixel-width tab-name) (string-pixel-width tab-id))
+                          'face
+                          `(:inherit ,face
+                                     :weight bold))
+              (propertize tab-name 'face `,face)
+              " ")
+             acc)
+            acc))
+        persps
+        `(,(propertize (+workspace-current-name) 'edge-x 0 'invisible t)))))))
+
+;; (customize-set-variable 'global-mode-string '((:eval (lkn-tab-bar--workspaces)) " "))
+(customize-set-variable 'global-mode-string '((:eval (if (and (fboundp 'persp-names) (< 1 (length (+workspace-list-names)))) (lkn-tab-bar--workspaces) (tab-bar-mode -1))) " "))
+(add-hook! 'dirvish-setup-hook #'(lambda () (if (< 1 (length (+workspace-list-names))) (tab-bar-mode +1) (tab-bar-mode -1))))
+(customize-set-variable 'tab-bar-format '(tab-bar-format-global))
+(customize-set-variable 'tab-bar-mode t)
+
+;; These two things combined prevents the tab list to be printed either as a
+;; tooltip or in the echo area
+(defun tooltip-help-tips (_event)
+  "Hook function to display a help tooltip.
+This is installed on the hook `tooltip-functions', which
+is run when the timer with id `tooltip-timeout-id' fires.
+Value is non-nil if this function handled the tip."
+  (let ((xf (lambda (str) (string-trim (substring-no-properties str)))))
+    (when (and
+           (stringp tooltip-help-message)
+           (not (string= (funcall xf tooltip-help-message) (funcall xf (format-mode-line (lkn-tab-bar--workspaces))))))
+      (tooltip-show tooltip-help-message (not tooltip-mode))
+      t)))
+
+(tooltip-mode)
+
+(defun lkn-tab-bar--event-to-item (event)
+  "Given a click EVENT, translate to a tab.
+
+We handle this by using `string-pixel-width' to calculate how
+long the tab would be in pixels and use that in the reduction in
+`lkn-tab-bar--workspaces' to determine which tab has been
+clicked."
+  (let* ((posn (event-start event))
+         (workspaces (lkn-tab-bar--workspaces))
+         (x (car (posn-x-y posn))))
+    (car (cl-remove-if (lambda (workspace)
+                         (>= x (get-text-property 0 'edge-x workspace)))
+                       workspaces))))
+
+(defun lkn-tab-bar-mouse-1 (ws)
+  "Switch to tabs by left clicking."
+  (when-let ((name (get-text-property 0 'name ws)))
+    (+workspace-switch name)))
+
+(defun lkn-tab-bar-mouse-2 (ws)
+  "Close tabs by clicking the mouse wheel."
+  (when-let ((name (get-text-property 0 'name ws)))
+    (+workspace/kill name)))
+
+(defun lkn-tab-bar-click-handler (evt)
+  "Function to handle clicks on the custom tab."
+  (interactive "e")
+  (when-let ((ws (lkn-tab-bar--event-to-item evt)))
+    (pcase (car evt)
+      ('mouse-1 (lkn-tab-bar-mouse-1 ws))
+      ('mouse-2 (lkn-tab-bar-mouse-2 ws)))))
+
+(keymap-set tab-bar-map "<mouse-1>" #'lkn-tab-bar-click-handler)
+(keymap-set tab-bar-map "<mouse-2>" #'lkn-tab-bar-click-handler)
+(keymap-set tab-bar-map "<wheel-up>" #'+workspace:switch-previous)
+(keymap-set tab-bar-map "<wheel-down>" #'+workspace:switch-next)
+
+;; ("%b – Doom Emacs")
+;; (setq frame-title-format
+;;     '((:eval
+;;        (let ((project-name (projectile-project-name)))
+;;          (unless (string= "-" project-name)
+;;            (format "[%s]: " project-name))))
+;;       "%b"))
+
+;; https://github.com/blaenk/dots/blob/main/dot_emacs.d/inits/conf/mode-line.el
+;; Construct the buffer identifier for a buffer backed by a file. This is done
+;; by combining: dirname/ + filename, each propertized separately.
+(defun my--mode-line-file-identifier (path &optional max-width)
+  (let* ((path (if (file-remote-p buffer-file-name)
+                   (tramp-file-name-localname (tramp-dissect-file-name buffer-file-name))
+                 path))
+         ;; FIXME
+         ;; This calls f-short on tramp
+         (dirname (file-name-as-directory (abbreviate-file-name (or (file-name-directory path) "./"))))
+         (filename (f-filename path))
+         (propertized-filename
+          (propertize filename 'face 'mode-line-buffer-id)))
+    (if (> (+ (length dirname) (length filename) 2) max-width)
+        propertized-filename
+      (concat
+       (unless (string= dirname "./")
+         (propertize dirname 'face 'mode-line-stem-face))
+       propertized-filename))))
+
+;; Construct the buffer identifier for a regular, simple buffer that is not
+;; backed by a file nor remote.
+(defun my--mode-line-buffer-identifier (&optional max-width)
+  (if buffer-file-name
+      (my--mode-line-file-identifier buffer-file-name max-width)
+    (propertize "%b" 'face 'mode-line-buffer-id)))
+
+(defun my--frame-title-format ()
+  (cond
+   ((and buffer-file-name (file-remote-p buffer-file-name))
+    (let ((tramp-vec (tramp-dissect-file-name buffer-file-name)))
+      (concat
+       (tramp-file-name-host tramp-vec)
+       " — "
+       (abbreviate-file-name (tramp-file-name-localname tramp-vec)))))
+
+   ((and (featurep 'projectile) (projectile-project-p))
+    (concat
+     (projectile-project-name)
+     " — "
+     (if buffer-file-name
+         (f-relative buffer-file-name (projectile-project-root))
+       (buffer-name))))
+
+   (t (my--mode-line-buffer-identifier))))
+
+(setq frame-title-format '(:eval (my--frame-title-format)))
+
+(setq +workspaces-switch-project-function #'dired)
+
+(map! :when (modulep! :ui workspaces)
+      :map doom-leader-workspace-map
+      :desc "Swap Left"  "<" #'+workspace/swap-left
+      :desc "Swap Right" ">" #'+workspace/swap-right)
+
+(use-package! proced :commands (proced)
+              :init
+              (setq proced-auto-update-flag t
+                    proced-auto-update-interval 1
+                    proced-descend t))
+
+(after! projectile
+  (setq ;; projectile-switch-project-action 'projectile-dired
+   projectile-project-root-functions '(projectile-root-local
+                                       projectile-root-marked
+                                       projectile-root-top-down
+                                       projectile-root-bottom-up
+                                       projectile-root-top-down-recurring)
+   projectile-enable-caching t
+   projectile-enable-cmake-presets t
+   projectile-project-search-path '(("~/.nix-config/" . 0)
+                                    ("~/Projects" . 3)
+                                    ("~/Work" . 2)))
+  (projectile-register-project-type 'acml/exercism-lua '(".exercism" ".busted" "HELP.md" "README.md")
+                                    :project-file '("?*.lua")
+                                    :test "busted -v"
+                                    :test-suffix "_spec"))
+
+(use-package! rainbow-mode
+  :hook
+  ((prog-mode . rainbow-mode)
+   (org-mode . rainbow-mode)))
+
+(use-package! scopeline
+  :commands (scopeline-mode)
+  ;; :config
+  ;; (add-to-list 'scopeline-targets '(makefile-mode "conditional"))
+  :init
+  (add-hook! 'prog-mode-hook #'scopeline-mode))
+
+(map!
+ (:leader
+  :desc "Project sidebar" :n "0" #'treemacs-select-window))
+
+(setq +treemacs-git-mode 'deferred
+      ;; treemacs-collapse-dirs 5
+      ;; treemacs-eldoc-display t
+      ;; treemacs-is-never-other-window nil
+      treemacs-position 'right
+      treemacs-recenter-after-file-follow 'on-distance
+      treemacs-recenter-after-project-expand 'on-distance
+      ;; treemacs-show-hidden-files t
+      ;; treemacs-silent-filewatch t
+      ;; treemacs-silent-refresh t
+      ;; treemacs-sorting 'alphabetic-asc
+      ;; treemacs-user-mode-line-format nil
+      treemacs-width 40
+      treemacs-follow-after-init t)
+
+(after! treemacs
+  (treemacs-define-RET-action 'file-node-open   #'treemacs-visit-node-in-most-recently-used-window)
+  (treemacs-define-RET-action 'file-node-closed #'treemacs-visit-node-in-most-recently-used-window)
+  ;; Quite often there are superfluous files I'm not that interested in. There's no
+  ;; good reason for them to take up space. Let's add a mechanism to ignore them.
+  (defvar treemacs-file-ignore-extensions '()
+    "File extension which `treemacs-ignore-filter' will ensure are ignored")
+  (defvar treemacs-file-ignore-globs '()
+    "Globs which will are transformed to
+`treemacs-file-ignore-regexps' which `treemacs-ignore-filter'
+will ensure are ignored")
+  (defvar treemacs-file-ignore-regexps '()
+    "RegExps to be tested to ignore files, generated from
+`treeemacs-file-ignore-globs'")
+  (defun treemacs-file-ignore-generate-regexps ()
+    "Generate `treemacs-file-ignore-regexps' from `treemacs-file-ignore-globs'"
+    (setq treemacs-file-ignore-regexps (mapcar 'dired-glob-regexp treemacs-file-ignore-globs)))
+  (if (equal treemacs-file-ignore-globs '()) nil (treemacs-file-ignore-generate-regexps))
+  (defun treemacs-ignore-filter (file full-path)
+    "Ignore files specified by `treemacs-file-ignore-extensions', and
+`treemacs-file-ignore-regexps'"
+    (or (member (file-name-extension file) treemacs-file-ignore-extensions)
+        (let ((ignore-file nil))
+          (dolist (regexp treemacs-file-ignore-regexps ignore-file)
+            (setq ignore-file (or ignore-file (if (string-match-p regexp full-path) t nil)))))))
+  (add-to-list 'treemacs-ignored-file-predicates #'treemacs-ignore-filter)
+
+  ;; Now, we just identify the files in question.
+  (setq treemacs-file-ignore-extensions
+        '(;; build outputs
+          "o"
+          "psd"
+          ;; LaTeX
+          "aux"
+          "ptc"
+          "fdb_latexmk"
+          "fls"
+          "synctex.gz"
+          "toc"
+          ;; LaTeX - glossary
+          "glg"
+          "glo"
+          "gls"
+          "glsdefs"
+          "ist"
+          "acn"
+          "acr"
+          "alg"
+          ;; LaTeX - pgfplots
+          "mw"
+          ;; LaTeX - pdfx
+          "pdfa.xmpi"
+          ))
+  (setq treemacs-file-ignore-globs
+        '(;; LaTeX
+          "*/_minted-*"
+          ;; AucTeX
+          "*/.auctex-auto"
+          "*/_region_.log"
+          "*/_region_.tex"))
+
+  (treemacs-follow-mode)
+  (treemacs-filewatch-mode))
+
+(use-package! turkish :commands (turkish-mode))
+
+(when (modulep! :completion vertico)
+  (after! consult
+    (consult-customize
+     +default/search-project +default/search-other-project
+     +default/search-project-for-symbol-at-point
+     +default/search-cwd +default/search-other-cwd
+     +default/search-notes-for-symbol-at-point
+     +default/search-emacsd
+     consult-bookmark
+     :preview-key (list "C-SPC" :debounce 0.2 'any))))
+
+(after! vterm
+  (setq vterm-max-scrollback 100000))
+
+;; Map [kp-delete] to send <C-d>. Otherwise, the delete key does not work in
+;; terminal.
+(map! :after vterm
+      :map vterm-mode-map
+      "<deletechar>" #'vterm-send-delete)
+
+(add-hook! 'vterm-mode-hook
+  (set (make-local-variable 'buffer-face-mode-face) '(:family "IosevkaTerm Nerd Font"))
+  (buffer-face-mode t))
+
+(setq which-key-allow-multiple-replacements t)
+(after! which-key
+  (pushnew! which-key-replacement-alist
+            ;; rename winum-select-window-1 entry to 1..9
+            '(("\\(.*\\)1" . "winum-select-window-1") . ("\\11..9" . "Switch to window 1..9"))
+            ;; hide winum-select-window-[2-9] entries
+            '((nil . "winum-select-window-[2-9]") . t)
+            '(("" . "\\`+?evil[-:/]?\\(?:a-\\)?\\(.*\\)") . (nil . " \\1"))
+            '(("\\`g s" . "\\`evilem--?motion-\\(.*\\)") . (nil . " \\1"))))
+
+;; text mode directory tree
+(after! ztree
+  (setq ztree-draw-unicode-lines t
+        ztree-show-number-of-children t))
+
+;;
+;;; Scratch frame
+
+(defvar +hlissner--scratch-frame nil)
+
+(defun cleanup-scratch-frame (frame)
+  (when (eq frame +hlissner--scratch-frame)
+    (with-selected-frame frame
+      (setq doom-fallback-buffer-name (frame-parameter frame 'old-fallback-buffer))
+      (remove-hook 'delete-frame-functions #'cleanup-scratch-frame))))
+
+;;;###autoload
+(defun open-scratch-frame (&optional fn)
+  "Opens the org-capture window in a floating frame that cleans itself up once
+you're done. This can be called from an external shell script."
+  (interactive)
+  (let* ((frame-title-format "")
+         (preframe (cl-loop for frame in (frame-list)
+                            if (equal (frame-parameter frame 'name) "scratch")
+                            return frame))
+         (frame (unless preframe
+                  (make-frame `((name . "scratch")
+                                (width . 120)
+                                (height . 24)
+                                (transient . t)
+                                (internal-border-width . 10)
+                                (left-fringe . 0)
+                                (right-fringe . 0)
+                                (undecorated . t)
+                                ,(if (featurep :system 'linux) '(display . ":0")))))))
+    (setq +hlissner--scratch-frame (or frame posframe))
+    (select-frame-set-input-focus +hlissner--scratch-frame)
+    (when frame
+      (with-selected-frame frame
+        (if fn
+            (call-interactively fn)
+          (with-current-buffer (switch-to-buffer "*scratch*")
+            ;; (text-scale-set 2)
+            (when (eq major-mode 'fundamental-mode)
+              (emacs-lisp-mode)))
+          (redisplay)
+          (set-frame-parameter frame 'old-fallback-buffer doom-fallback-buffer-name)
+          (setq doom-fallback-buffer-name "*scratch*")
+          (add-hook 'delete-frame-functions #'cleanup-scratch-frame))))))
+
+(use-package! reader
+  :mode (("\\.pdf\\'" . reader-mode)
+         ("\\.epub\\'" . reader-mode)
+         ("\\.mobi\\'" . reader-mode)
+         ("\\.fb2\\'" . reader-mode)
+         ("\\.xps\\'" . reader-mode)
+         ("\\.cbz\\'" . reader-mode)
+         ("\\.odt\\'" . reader-mode)
+         ("\\.docx\\'" . reader-mode)
+         ("\\.pptx\\'" . reader-mode)
+         ("\\.xlsx\\'" . reader-mode))
+  :bind ((:map reader-mode-map
+               ("j" . reader-scroll-down-or-next-page)
+               ("k" . reader-scroll-up-or-prev-page)
+               ("h" . reader-scroll-left)
+               ("l" . reader-scroll-right)
+               ("d" . reader-next-page)
+               ("u" . reader-previous-page)
+               ("P" . reader-goto-page)
+               ("H" . reader-fit-to-height)
+               ("W" . reader-fit-to-width)
+               ("q" . nil)))
+  :config
+  ;; Use evil keybindings in reader-mode
+  (evil-set-initial-state 'reader-mode 'normal)
+
+  ;; Evil-friendly navigation (package defaults: n/p for pages, H/W for fit)
+  (map! :map reader-mode-map
+        :n "j" #'reader-scroll-down-or-next-page
+        :n "k" #'reader-scroll-up-or-prev-page
+        :n "h" #'reader-scroll-left
+        :n "l" #'reader-scroll-right
+        :n "gg" #'reader-first-page
+        :n "G" #'reader-last-page
+        :n "+" #'reader-enlarge-size
+        :n "-" #'reader-shrink-size
+        :n "0" #'reader-reset-size
+        :n "W" #'reader-fit-to-width
+        :n "H" #'reader-fit-to-height
+        :n ":" #'reader-goto-page
+        :n "q" #'quit-window
+        :n "Q" #'reader-close-doc))
+
+(when (and (featurep :system 'linux)
+           (display-graphic-p)
+           (getenv "WSL_DISTRO_NAME"))
+  (defun acml-set-keyboard ()
+    (interactive)
+    (start-process "" nil "setxkbmap" "us" "-variant" "colemak")
+    (message "Switched to the Colemak Keyboard Layout"))
+
+  (map! "<f9>" #'acml-set-keyboard)
+  (add-hook! 'emacs-startup-hook #'acml-set-keyboard))
+
+(map! "<f5>" #'projectile-run-project)
+(map! "<f6>" #'previous-error)
+(map! "<f7>" #'next-error)
+(map! "<S-f8>" #'projectile-compile-project)
+(map! "<f8>" #'projectile-repeat-last-command)
+;; (map! "<f9>" #'acml-set-keyboard)
+;; F12
+
+(use-package! yazi
+  :init
+  (map! (:leader :desc "Yazi" :n "oy" #'yazi)))
+
+(use-package zone :disabled
+  :config
+  (zone-when-idle (* 60 1)))
+
+(use-package! macher
+  :custom
+  ;; The org UI has structured navigation and nice content folding.
+  (macher-action-buffer-ui 'org)
+
+  :config
+  ;; Adjust buffer positioning to taste.
+  ;; (add-to-list
+  ;;  'display-buffer-alist
+  ;;  '("\\*macher:.*\\*"
+  ;;    (display-buffer-in-side-window)
+  ;;    (side . bottom)))
+  (add-to-list
+   'display-buffer-alist
+   '("\\*macher-patch:.*\\*"
+     (display-buffer-in-side-window)
+     (side . right)))
+  )
+
+(use-package! gptel
+  :if (not (string= (system-name) "dinm5CG52813LW"))
+  :config
+  (pop gptel--known-backends) ; remove the default ChatGPT backend
+  (setq gptel-include-reasoning 'ignore)
+  (gptel-make-gemini "Gemini"
+    :key #'gptel-api-key-from-auth-source
+    :stream t)
+  (setq
+   gptel-model 'gpt-4.1
+   gptel-backend (gptel-make-gh-copilot "Copilot"))
+  (gptel-make-kagi "Kagi"
+    :key #'gptel-api-key-from-auth-source)
+  (gptel-make-openai "Groq"
+    :host "api.groq.com"
+    :endpoint "/openai/v1/chat/completions"
+    :stream t
+    :key #'gptel-api-key-from-auth-source
+    :models '(llama-3.1-70b-versatile
+              llama-3.1-8b-instant
+              llama3-70b-8192
+              llama3-8b-8192
+              mixtral-8x7b-32768
+              gemma-7b-it))
+  (gptel-make-openai "MistralLeChat"
+    :host "api.mistral.ai"
+    :endpoint "/v1/chat/completions"
+    :protocol "https"
+    :key #'gptel-api-key-from-auth-source
+    :models '("mistral-small"))
+  (gptel-make-openai "OpenRouter"
+    :host "openrouter.ai"
+    :endpoint "/api/v1/chat/completions"
+    :stream t
+    :key #'gptel-api-key-from-auth-source
+    :models '(nvidia/nemotron-nano-9b-v2:free
+              openrouter/sonoma-dusk-alpha
+              openrouter/sonoma-sky-alpha
+              deepseek/deepseek-chat-v3.1:free
+              openai/gpt-oss-120b:free
+              openai/gpt-oss-20b:free
+              z-ai/glm-4.5-air:free
+              qwen/qwen3-coder:free
+              moonshotai/kimi-k2:free
+              lphin-mistral-24b-venice-edition:free
+              google/gemma-3n-e2b-it:free
+              tencent/hunyuan-a13b-instruct:free
+              tngtech/deepseek-r1t2-chimera:free
+              mistralai/mistral-small-3.2-24b-instruct:free
+              moonshotai/kimi-dev-72b:free
+              deepseek/deepseek-r1-0528-qwen3-8b:free
+              deepseek/deepseek-r1-0528:free
+              mistralai/devstral-small-2505:free
+              google/gemma-3n-e4b-it:free
+              meta-llama/llama-3.3-8b-instruct:free
+              qwen/qwen3-4b:free
+              qwen/qwen3-30b-a3b:free
+              qwen/qwen3-8b:free
+              qwen/qwen3-14b:free
+              qwen/qwen3-235b-a22b:free
+              tngtech/deepseek-r1t-chimera:free
+              microsoft/mai-ds-r1:free
+              shisa-ai/shisa-v2-llama3.3-70b:free
+              arliai/qwq-32b-arliai-rpr-v1:free
+              agentica-org/deepcoder-14b-preview:free
+              moonshotai/kimi-vl-a3b-thinking:free
+              meta-llama/llama-4-maverick:free
+              meta-llama/llama-4-scout:free
+              qwen/qwen2.5-vl-32b-instruct:free
+              deepseek/deepseek-chat-v3-0324:free
+              mistralai/mistral-small-3.1-24b-instruct:free
+              google/gemma-3-4b-it:free
+              google/gemma-3-12b-it:free
+              rekaai/reka-flash-3:free
+              google/gemma-3-27b-it:free
+              qwen/qwq-32b:free
+              nousresearch/deephermes-3-llama-3-8b-preview:free
+              cognitivecomputations/dolphin3.0-r1-mistral-24b:free
+              cognitivecomputations/dolphin3.0-mistral-24b:free
+              qwen/qwen2.5-vl-72b-instruct:free
+              mistralai/mistral-small-24b-instruct-2501:free
+              deepseek/deepseek-r1-distill-llama-70b:free
+              deepseek/deepseek-r1:free
+              google/gemini-2.0-flash-exp:free
+              meta-llama/llama-3.3-70b-instruct:free
+              qwen/qwen-2.5-coder-32b-instruct:free
+              meta-llama/llama-3.2-3b-instruct:free
+              qwen/qwen-2.5-72b-instruct:free
+              meta-llama/llama-3.1-405b-instruct:free
+              mistralai/mistral-nemo:free
+              google/gemma-2-9b-it:free
+              mistralai/mistral-7b-instruct:free))
+  (gptel-make-openai "Github Models"
+    :host "models.inference.ai.azure.com"
+    :endpoint "/chat/completions?api-version=2024-05-01-preview"
+    :stream t
+    :key #'gptel-api-key-from-auth-source
+    :models '(gpt-4o))
+  (gptel-make-openai "NovitaAI"
+    :host "api.novita.ai"
+    :endpoint "/v3/openai"
+    :key #'gptel-api-key-from-auth-source
+    :stream t
+    :models '(;; has many more, check https://novita.ai/llm-api
+              meta-llama/llama-3.2-1b-instruct
+              qwen/qwen3-4b-fp8
+              baidu/ernie-4.5-0.3b
+              google/gemma-3-1b-it
+              baidu/ernie-4.5-0.3b))
+  (gptel-make-openai "AI/ML API"
+    :host "api.aimlapi.com"
+    :endpoint "/v1/chat/completions"
+    :stream t
+    :key #'gptel-api-key-from-auth-source
+    :models '(google/gemma-3n-e4b-it
+              google/gemma-3-12b-it
+              google/gemma-3-4b-it
+              google/gemma-3-1b-it
+              gpt-4o))
+  (gptel-make-gh-copilot "Copilot")
+  (macher-install)
+  :hook
+  (gptel-post-stream-hook . gptel-auto-scroll))
+
+(use-package! gptel-agent
+  :config (gptel-agent-update))
+
+(use-package! gptel-quick
+  :after gptel
+  :init
+  (map! "<f1>" #'gptel-quick))
+
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)
+              ("C-n" . 'copilot-next-completion)
+              ("C-p" . 'copilot-previous-completion))
+
+  :config
+  (add-to-list 'copilot-indentation-alist '(prog-mode 2))
+  (add-to-list 'copilot-indentation-alist '(org-mode 2))
+  (add-to-list 'copilot-indentation-alist '(text-mode 2))
+  (add-to-list 'copilot-indentation-alist '(clojure-mode 2))
+  (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2))
+  (setq copilot-max-char -1))
+
+(use-package! gt
+  ;; :bind (("C-c t" . gt-translate))
+  :init
+  (map! :leader :desc "Translate"
+        "oc" #'gt-translate)
+  :config
+  (setopt gt-langs '(de en tr)
+          gt-buffer-render-evil-leading-key nil
+          gt-buffer-render-follow-p t
+          gt-default-translator (gt-translator
+                                 :taker   (gt-taker :text 'buffer :pick 'paragraph)
+                                 :engines (list (gt-bing-engine))
+                                 :render  (gt-buffer-render)))
+  (with-eval-after-load 'evil
+    (add-hook 'gt-buffer-render-init-hook
+              (lambda ()
+                (toggle-truncate-lines -1)
+                (evil-define-key '(normal visual insert emacs) gt-buffer-render-local-map
+                  "q" 'kill-buffer-and-window)))))
+
+;; Load a file with the same name as the computer’s name. Just keep on going if
+;; the requisite file isn't there.
+(load! (car (split-string (system-name) "\\.")) nil t)
+
+;; Load a file with the name of the OS type ("gnu/linux" → "linux")
+(load! (car (reverse (split-string (symbol-name system-type) "/"))) nil t)

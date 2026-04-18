@@ -162,7 +162,7 @@ in
 
           safe = {
             directory = [
-              "${config.home.homeDirectory}/khanelinix/"
+              "${config.home.homeDirectory}/.config/khanelinix/"
               "/etc/nixos"
               "/etc/nix-darwin"
             ];
