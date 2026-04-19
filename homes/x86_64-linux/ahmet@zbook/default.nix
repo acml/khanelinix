@@ -26,6 +26,7 @@ in
 
     programs = {
       graphical = {
+        addons.looking-glass-client = enabled;
         bars = {
           ashell = {
             fullSizeOutputs = [ "eDP-1" ];
@@ -364,7 +365,7 @@ in
     };
 
     theme = {
-      catppuccin = enabled;
+      tokyonight = enabled;
       stylix = enabled;
     };
   };
