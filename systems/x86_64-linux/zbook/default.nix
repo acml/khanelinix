@@ -1,9 +1,11 @@
 {
   lib,
+  pkgs,
   ...
 }:
 let
   inherit (lib.khanelinix) enabled;
+  inherit (lib) mkForce mkMerge;
 in
 {
   imports = [
@@ -26,9 +28,11 @@ in
     };
 
     display-managers = {
-      gdm = {
-        defaultSession = "gnome";
-      };
+      # gdm = {
+      #   defaultSession = "gnome";
+      # };
+      gdm.monitors = ./monitors.xml;
+      regreet.hyprlandOutput = builtins.readFile ./hyprlandOutput;
     };
 
     hardware = {
@@ -52,11 +56,26 @@ in
 
     programs = {
       graphical = {
-        desktop-environment = {
-          gnome = {
-            enable = true;
-          };
-        };
+        # desktop-environment = {
+        #   gnome = {
+        #     enable = true;
+        #   };
+        # };
+        wms = mkMerge [
+          {
+            hyprland.enable = true;
+            niri = {
+              enable = true;
+              package = pkgs.niri-unstable;
+            };
+          }
+          {
+            sway = {
+              enable = true;
+              withUWSM = true;
+            };
+          }
+        ];
       };
     };
 
@@ -94,6 +113,7 @@ in
       locale = enabled;
       networking.enable = true;
       time = enabled;
+      xkb = enabled;
     };
 
     theme = {
@@ -115,6 +135,13 @@ in
   nix.settings = {
     cores = 8;
     max-jobs = 8;
+  };
+
+  services = {
+    displayManager.defaultSession = "hyprland-uwsm";
+    irqbalance.enable = mkForce false;
+    xserver.xkb.variant = "colemak";
+    xserver.xkb.options = mkForce "ctrl:swapcaps";
   };
 
   system.stateVersion = "26.05";
