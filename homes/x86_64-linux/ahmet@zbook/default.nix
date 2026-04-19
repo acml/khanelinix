@@ -284,7 +284,7 @@ in
         editors.neovim.enable = true;
         emulators = {
           alacritty.enable = false;
-          kitty.enable = false;
+          kitty.enable = true;
           wezterm.enable = false;
         };
 

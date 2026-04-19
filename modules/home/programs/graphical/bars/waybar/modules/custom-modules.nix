@@ -137,7 +137,7 @@ let
   '';
 
   weatherHelper = pkgs.writeShellScriptBin "waybar-weather-helper" ''
-    WEATHER_JSON="$(${getExe pkgs.wttrbar} --fahrenheit --ampm${
+    WEATHER_JSON="$(${getExe pkgs.wttrbar} --ampm${
       lib.optionalString (config.khanelinix.services.sops.enable or false
       ) " --location $(jq '.wttr.location' ${config.home.homeDirectory}/weather_config.json)"
     })"
