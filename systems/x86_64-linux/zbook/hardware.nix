@@ -21,6 +21,22 @@
   };
 
   hardware = {
+    display = {
+      outputs = {
+        "eDP-1" = {
+          mode = "1920x1080@60";
+        };
+        "DP-7" = {
+          mode = "1920x1080@60";
+        };
+        "DP-8" = {
+          mode = "1680x1050@60";
+        };
+        "DP-9" = {
+          mode = "1920x1080@60";
+        };
+      };
+    };
     enableRedistributableFirmware = true;
   };
 }
