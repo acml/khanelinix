@@ -144,5 +144,7 @@ in
     xserver.xkb.options = mkForce "ctrl:swapcaps";
   };
 
+  time.timeZone = mkForce "Europe/Istanbul";
+
   system.stateVersion = "26.05";
 }

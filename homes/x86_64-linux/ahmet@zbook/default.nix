@@ -360,6 +360,7 @@ in
       };
 
       networking = enabled;
+      social.enable = lib.mkForce false;
     };
 
     theme = {
