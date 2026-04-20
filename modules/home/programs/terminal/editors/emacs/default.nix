@@ -42,7 +42,7 @@ let
         ];
       })
     else
-      pkgs.emacs-git.overrideAttrs (old: {
+      pkgs.emacs-git-pgtk.overrideAttrs (old: {
         passthru = old.passthru // {
           treeSitter = true;
         };
