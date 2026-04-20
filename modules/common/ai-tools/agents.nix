@@ -1,7 +1,5 @@
 { lib, ... }:
 let
-  inherit (lib) mapAttrs;
-
   agentsBasePath = ./agents;
 
   agents = {
@@ -18,7 +16,7 @@ let
       model = {
         claude = "opus";
         gemini = "gemini-3.1-pro-preview";
-        opencode = "gpt-5.4";
+        opencode = "openai/gpt-5.4";
       };
       permission = {
         edit = "ask";
@@ -40,7 +38,7 @@ let
       model = {
         claude = "sonnet";
         gemini = "gemini-3.1-pro-preview";
-        opencode = "gpt-5.4";
+        opencode = "openai/gpt-5.4";
       };
       permission = {
         edit = "ask";
@@ -71,7 +69,6 @@ let
     };
   };
 
-  # Claude Code expects YAML frontmatter with: name, description, tools (comma-sep), model
   renderClaudeFrontmatter = agent: ''
     ---
     name: ${agent.name}
@@ -87,34 +84,43 @@ let
     ${lib.trim agent.content}
   '';
 
-  # Render permission value (string or attrset with glob patterns)
-
-  # Render permissions block
-
-  # OpenCode expects YAML frontmatter with: description, mode, model, tools
   renderOpenCodeTools =
     agent:
     let
       allowed = map lib.toLower agent.tools;
-      isAllowed = t: lib.elem t allowed;
+      isAllowed = tool: lib.elem tool allowed;
       coreTools = [
         "bash"
         "edit"
         "write"
       ];
-      coreToolLines = map (t: "  ${t}: ${if isAllowed t then "true" else "false"}") coreTools;
+      coreToolLines = map (tool: "  ${tool}: ${if isAllowed tool then "true" else "false"}") coreTools;
     in
     lib.concatStringsSep "\n" coreToolLines;
 
-  renderOpenCodeFrontmatter = agent: ''
-    ---
-    description: ${agent.description}
-    mode: all
-    model: ${agent.model.opencode or agent.model}
+  renderOpenCodePermission =
+    permission:
+    if permission == null then
+      ""
+    else
+      let
+        render = key: value: ''"${key}": ${toString value}'';
+      in
+      ''
+        permission:
+        ${lib.concatStringsSep "\n" (lib.mapAttrsToList render permission)}
+      '';
 
-    tools:
-    ${renderOpenCodeTools agent}
-    ---
+  renderOpenCodeFrontmatter = agent: ''
+        ---
+        description: ${agent.description}
+        mode: ${agent.mode or "all"}
+        model: ${agent.model.opencode or agent.model}
+
+        tools:
+        ${renderOpenCodeTools agent}
+    ${renderOpenCodePermission agent.permission}
+        ---
   '';
 
   renderOpenCodeAgent = agent: ''
@@ -123,9 +129,20 @@ let
     ${lib.trim agent.content}
   '';
 
-  toClaudeMarkdown = mapAttrs (_name: renderClaudeAgent) agents;
-  toOpenCodeMarkdown = mapAttrs (_name: renderOpenCodeAgent) agents;
+  toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) agents;
+  toGeminiAgents = lib.mapAttrs (_name: agent: {
+    prompt = agent.content;
+    description = agent.description or "AI agent";
+  }) agents;
+  toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeAgent) agents;
 in
 {
-  inherit agents toClaudeMarkdown toOpenCodeMarkdown;
+  inherit
+    agents
+    renderClaudeAgent
+    renderOpenCodeAgent
+    toClaudeMarkdown
+    toGeminiAgents
+    toOpenCodeMarkdown
+    ;
 }

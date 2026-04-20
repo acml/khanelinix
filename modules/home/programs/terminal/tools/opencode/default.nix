@@ -14,6 +14,7 @@ in
   imports = [
     ./formatters.nix
     ./lsp.nix
+    ./oh-my-openagent.nix
     ./permission.nix
     ./provider.nix
   ];
@@ -23,43 +24,84 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.opencode = {
-      enable = true;
-
-      enableMcpIntegration =
-        let
-          mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
-        in
-        mkIf mcpModuleEnabled true;
-
-      settings = {
-        model = "gpt-5.4";
-        # TODO: enable
-        # model = "gpt-5.4";
-        autoshare = false;
-        autoupdate = false;
-
-        plugin = [
-          # Support google account auth
-          "opencode-gemini-auth@latest"
-          # Dynamic context pruning
-          "@tarquinen/opencode-dcp@latest"
-          # Support background shell commands
-          "opencode-pty"
-          #
-          "oh-my-opencode"
-        ];
+    home.shellAliases =
+      let
+        refactorerModel = aiTools.agents.refactorer.model.opencode;
+      in
+      {
+        opencode-coding = "opencode --model openai/gpt-5.3-codex-spark";
+        opencode-deep = "opencode --model ${refactorerModel}";
+        opencode-nano = "opencode --model openai/gpt-5.4-nano";
+        opencode-research = "opencode --agent refactorer";
       };
 
-      tui = {
-        theme = mkDefault "opencode";
+    programs.opencode =
+      let
+        aiToolAgents = import (lib.getFile "modules/common/ai-tools/agents.nix") { inherit lib; };
+        aiToolCommands = import (lib.getFile "modules/common/ai-tools/commands.nix") { inherit lib; };
+        refactorerModel = aiTools.agents.refactorer.model.opencode;
+      in
+      {
+        enable = true;
+
+        enableMcpIntegration =
+          let
+            mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
+          in
+          mkIf mcpModuleEnabled true;
+
+        settings = {
+          model = refactorerModel;
+          share = "manual";
+          autoupdate = false;
+          small_model = "openai/gpt-5.3-codex-spark";
+          default_agent = "refactorer";
+          compaction = {
+            auto = true;
+            prune = true;
+            reserved = 20000;
+          };
+          command = {
+            quick = {
+              template = "Make fast, minimal edits and keep responses concise.";
+              model = "openai/gpt-5.3-codex-spark";
+              agent = "refactorer";
+              subtask = true;
+            };
+            research = {
+              template = "Do deliberate analysis before edits, include caveats and verification steps.";
+              model = refactorerModel;
+              agent = "refactorer";
+            };
+            nano = {
+              template = "Keep each action minimal and targeted for small-surface modifications.";
+              model = "openai/gpt-5.4-nano";
+              agent = "refactorer";
+              subtask = true;
+            };
+          };
+
+          plugin = [
+            # Support google account auth
+            "opencode-gemini-auth@latest"
+            # Support background shell commands
+            "opencode-pty@latest"
+            # Enhanced agent orchestration and plugin workflow
+            "oh-my-openagent@latest"
+          ];
+        };
+
+        tui = {
+          theme = mkDefault "opencode";
+        };
+
+        commands = lib.mapAttrs (
+          _: command: aiToolCommands.renderOpenCodeMarkdown command
+        ) aiTools.commands;
+        agents = lib.mapAttrs (_: agent: aiToolAgents.renderOpenCodeAgent agent) aiTools.agents;
+        skills = aiTools.skillsDir;
+
+        context = builtins.readFile aiTools.base;
       };
-
-      inherit (aiTools.opencode) commands;
-      agents = aiTools.opencode.renderAgents;
-      skills = lib.getFile "modules/common/ai-tools/skills";
-
-      context = builtins.readFile (lib.getFile "modules/common/ai-tools/base.md");
-    };
   };
 }

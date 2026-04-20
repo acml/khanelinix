@@ -3,6 +3,7 @@
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
 local icons = require("helpers.icons")
+local logger = require("helpers.logger")
 
 local disk = Sbar.add("item", "disk", {
 	background = {
@@ -32,6 +33,7 @@ local disk = Sbar.add("item", "disk", {
 })
 
 local popupVisible = false
+local isActive = true
 local process_monitor = require("items.stats.process_monitor")
 
 local monitor = process_monitor(
@@ -62,21 +64,32 @@ local monitor = process_monitor(
 	end
 )
 
-disk:subscribe({
-	"routine",
-	"forced",
-	"system_woke",
-}, function()
+local function refresh_disk()
+	if not isActive then
+		return
+	end
+
 	Sbar.exec("df -H | grep -E '^(/dev/disk3s1s1 ).' | awk '{ printf (\"%s\\n\", $5) }'", function(diskUsage)
+		if IS_EMPTY(diskUsage) then
+			logger.warn("disk", "empty_usage", {})
+			return
+		end
 		disk:set({ label = diskUsage })
 	end)
 
 	if popupVisible then
 		monitor.update()
 	end
-end)
+end
+
+disk:subscribe({
+	"routine",
+	"forced",
+	"system_woke",
+}, refresh_disk)
 
 disk:subscribe("mouse.clicked", function()
+	logger.debug("disk", "open_activity_monitor", {})
 	Sbar.exec("open -a 'Activity Monitor'")
 end)
 
@@ -84,6 +97,7 @@ disk:subscribe("mouse.entered", function()
 	popupVisible = true
 	monitor.update()
 	disk:set({ popup = { drawing = true } })
+	logger.debug("disk", "popup_opened", {})
 end)
 
 disk:subscribe({
@@ -92,6 +106,26 @@ disk:subscribe({
 }, function()
 	popupVisible = false
 	disk:set({ popup = { drawing = false } })
+	logger.debug("disk", "popup_closed", {})
 end)
+
+function disk.activate()
+	if isActive then
+		return
+	end
+
+	isActive = true
+	refresh_disk()
+end
+
+function disk.deactivate()
+	if not isActive then
+		return
+	end
+
+	isActive = false
+	popupVisible = false
+	disk:set({ popup = { drawing = false } })
+end
 
 return disk

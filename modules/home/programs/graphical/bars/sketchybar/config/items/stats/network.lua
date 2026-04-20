@@ -2,11 +2,10 @@
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
 local icons = require("helpers.icons")
+local logger = require("helpers.logger")
 require("helpers.utils")
 
 local network = {}
-
-Sbar.exec("killall sketchy_network_load >/dev/null 2>&1; sketchy_network_load en0 network_update 10.0")
 
 network.down = Sbar.add("item", "network.down", {
 	background = {
@@ -91,10 +90,14 @@ network.header = Sbar.add("item", "network.details.header", {
 })
 
 network.rows = {}
+local helper_command = "killall sketchy_network_load >/dev/null 2>&1; sketchy_network_load en0 network_update 10.0"
+local stop_helper_command = "killall sketchy_network_load >/dev/null 2>&1"
 local updateTopConnections
 local recentProcesses = {}
 local recentOrder = {}
 local recentTtlSeconds = 20
+local updateTopConnectionsInFlight = false
+local isActive = true
 for i = 1, 5 do
 	network.rows[i] = Sbar.add("item", "network.details." .. i, {
 		position = "popup." .. network.down.name,
@@ -121,6 +124,16 @@ for i = 1, 5 do
 end
 
 local popupVisible = false
+
+local function start_helper()
+	Sbar.exec(helper_command)
+end
+
+local function stop_helper()
+	Sbar.exec(stop_helper_command)
+end
+
+start_helper()
 
 local function formatBytes(bytes)
 	local value = tonumber(bytes) or 0
@@ -174,6 +187,12 @@ local function expireRecentProcesses()
 end
 
 updateTopConnections = function()
+	if updateTopConnectionsInFlight then
+		return
+	end
+
+	updateTopConnectionsInFlight = true
+	logger.debug("network", "top_connections_update_start", {})
 	Sbar.exec(
 		[=[
 		nettop -P -d -L 2 -J bytes_in,bytes_out -x -n 2>/dev/null | awk -F, '
@@ -198,6 +217,7 @@ updateTopConnections = function()
 		' | sort -t, -k1,1nr | head -n 5
 	]=],
 		function(result)
+			updateTopConnectionsInFlight = false
 			local activeProcesses = {}
 			local visibleRows = {}
 
@@ -214,6 +234,10 @@ updateTopConnections = function()
 						string.format("%-16s  %7s  %7s", shortProc, formatBytes(inb), formatBytes(outb))
 					)
 				end
+			end
+
+			if #visibleRows == 0 then
+				logger.debug("network", "top_connections_empty", {})
 			end
 
 			for proc, entry in pairs(recentProcesses) do
@@ -254,9 +278,20 @@ updateTopConnections = function()
 end
 
 network.down:subscribe("network_update", function(env)
+	if not isActive then
+		return
+	end
 	if IS_SYSTEM_SLEEPING then
 		return
 	end
+	if env == nil or IS_EMPTY(env.upload) or IS_EMPTY(env.download) then
+		logger.warn("network", "update_missing_fields", {
+			upload = tostring(env and env.upload or ""),
+			download = tostring(env and env.download or ""),
+		})
+		return
+	end
+
 	local up_color = (env.upload == "000 Bps") and colors.subtext0 or colors.green
 	local down_color = (env.download == "000 Bps") and colors.subtext0 or colors.blue
 	network.up:set({
@@ -283,7 +318,7 @@ local function refreshPopupLoop()
 	end
 
 	updateTopConnections()
-	DELAY(1, refreshPopupLoop)
+	DELAY(2, refreshPopupLoop)
 end
 
 local function showPopup()
@@ -313,5 +348,25 @@ network.up:subscribe({
 	"mouse.exited",
 	"mouse.exited.global",
 }, hidePopup)
+
+function network.activate()
+	if isActive then
+		return
+	end
+
+	isActive = true
+	start_helper()
+end
+
+function network.deactivate()
+	if not isActive then
+		return
+	end
+
+	isActive = false
+	popupVisible = false
+	network.down:set({ popup = { drawing = false } })
+	stop_helper()
+end
 
 return network

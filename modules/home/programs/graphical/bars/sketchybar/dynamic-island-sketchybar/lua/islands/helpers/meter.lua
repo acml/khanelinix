@@ -24,9 +24,10 @@ return function(ctx, options)
 	local getIcon = options.getIcon
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands." .. name .. ".maxExpandWidth", "130"), 130)
+	local maxExpandWidthPx = ctx.calculateIslandWidth(maxExpandWidth)
 	local expandHeight = ctx.asNumber(ctx.get("islands." .. name .. ".expandHeight", "65"), 65)
 	local cornerRadius = ctx.asNumber(ctx.get("islands." .. name .. ".cornerRadius", "12"), 12)
-	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
+	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local maxExpandHeight = expandHeight + math.floor(ctx.squishAmount / 2)
 
 	local iconItem = ctx.Sbar.add("item", "island." .. name .. "_icon", {
@@ -151,7 +152,7 @@ return function(ctx, options)
 			})
 		end)
 
-		local barWidth = math.floor((percent / 100) * (maxExpandWidth * 2 - 20) + 0.5)
+		local barWidth = math.floor((percent / 100) * (maxExpandWidthPx - 20) + 0.5)
 		ctx.Sbar.animate("tanh", 15, function()
 			barItem:set({
 				width = barWidth,

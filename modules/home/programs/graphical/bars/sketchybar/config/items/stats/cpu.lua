@@ -3,8 +3,7 @@
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
 local icons = require("helpers.icons")
-
-Sbar.exec("killall sketchy_cpu_load >/dev/null 2>&1; sketchy_cpu_load cpu_update 2.0")
+local logger = require("helpers.logger")
 
 local cpu = Sbar.add("item", "cpu", {
 	background = {
@@ -33,7 +32,10 @@ local cpu = Sbar.add("item", "cpu", {
 	},
 })
 
+local helper_command = "killall sketchy_cpu_load >/dev/null 2>&1; sketchy_cpu_load cpu_update 2.0"
+local stop_helper_command = "killall sketchy_cpu_load >/dev/null 2>&1"
 local popupVisible = false
+local isActive = true
 local process_monitor = require("items.stats.process_monitor")
 
 local monitor = process_monitor(
@@ -58,9 +60,26 @@ local monitor = process_monitor(
 	end
 )
 
+local function start_helper()
+	Sbar.exec(helper_command)
+end
+
+local function stop_helper()
+	Sbar.exec(stop_helper_command)
+end
+
+start_helper()
+
 cpu:subscribe("cpu_update", function(env)
+	if not isActive then
+		return
+	end
 	-- Also available: env.user_load, env.sys_load
 	local load = tonumber(env.total_load)
+	if load == nil then
+		logger.warn("cpu", "parse_failed", { payload = tostring(env.total_load) })
+		return
+	end
 
 	local color = colors.text
 	if load > 30 then
@@ -79,6 +98,7 @@ cpu:subscribe("cpu_update", function(env)
 			color = color,
 		},
 	})
+	logger.debug("cpu", "load_updated", { load = load, color = tostring(color) })
 
 	if popupVisible then
 		monitor.update()
@@ -86,6 +106,7 @@ cpu:subscribe("cpu_update", function(env)
 end)
 
 cpu:subscribe("mouse.clicked", function()
+	logger.debug("cpu", "open_activity_monitor", {})
 	Sbar.exec("open -a 'Activity Monitor'")
 end)
 
@@ -93,6 +114,7 @@ cpu:subscribe("mouse.entered", function()
 	popupVisible = true
 	monitor.update()
 	cpu:set({ popup = { drawing = true } })
+	logger.debug("cpu", "popup_opened", {})
 end)
 
 cpu:subscribe({
@@ -101,6 +123,27 @@ cpu:subscribe({
 }, function()
 	popupVisible = false
 	cpu:set({ popup = { drawing = false } })
+	logger.debug("cpu", "popup_closed", {})
 end)
+
+function cpu.activate()
+	if isActive then
+		return
+	end
+
+	isActive = true
+	start_helper()
+end
+
+function cpu.deactivate()
+	if not isActive then
+		return
+	end
+
+	isActive = false
+	popupVisible = false
+	cpu:set({ popup = { drawing = false } })
+	stop_helper()
+end
 
 return cpu
