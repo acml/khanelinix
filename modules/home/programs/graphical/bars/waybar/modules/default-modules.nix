@@ -101,6 +101,7 @@ in
       mode-mon-col = 3;
       weeks-pos = "right";
       on-scroll = 1;
+      iso8601 = true;
       format = {
         months = "<span color='${catppuccin.colors.rosewater.hex}'><b>{}</b></span>";
         days = "<span color='${catppuccin.colors.flamingo.hex}'><b>{}</b></span>";
