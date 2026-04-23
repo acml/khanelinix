@@ -181,6 +181,7 @@ in
         input = {
           follow_mouse = 1;
           kb_layout = "us";
+          kb_variant = "colemak";
           numlock_by_default = true;
 
           touchpad = {

@@ -17,6 +17,7 @@ in
         input = {
           keyboard = {
             xkb.layout = "us";
+            xkb.variant = "colemak";
             repeat-delay = 600;
             repeat-rate = 25;
           };

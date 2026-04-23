@@ -24,7 +24,7 @@ in
 
     console = {
       font = "Lat2-Terminus16";
-      keyMap = mkForce "us";
+      keyMap = mkForce "colemak";
     };
   };
 }

@@ -12,6 +12,8 @@ in
     ./disks.nix
     ./hardware.nix
     ./network.nix
+    ./nvidia.nix
+    ./opengl.nix
     # ./specializations.nix
   ];
 
@@ -131,17 +133,59 @@ in
     # Fix mouse pointer in gnome
     NO_POINTER_VIEWPORT = "1";
   };
+  environment.sessionVariables = {
+    # Fix Nvidia cursor rendering issues in wlroots compositors (like Hyprland)
+    WLR_NO_HARDWARE_CURSORS = "1";
+  };
 
   nix.settings = {
     cores = 8;
     max-jobs = 8;
   };
 
+  # console.earlySetup = false;
+  # console.keyMap = "colemak";
+  # console.useXkbConfig = lib.mkForce false;
+  console = {
+    earlySetup = true;
+    font = lib.mkForce "ter-122b";
+    packages = with pkgs; [ terminus_font ];
+    keyMap = "colemak";
+  };
+
   services = {
     displayManager.defaultSession = "hyprland-uwsm";
     irqbalance.enable = mkForce false;
+    keyd = {
+      enable = true;
+      keyboards.default = {
+        ids = [ "*" ];
+        settings.main = {
+          shift = "oneshot(shift)";
+          meta = "oneshot(meta)";
+          control = "oneshot(control)";
+
+          leftalt = "oneshot(alt)";
+          rightalt = "oneshot(altgr)";
+
+          capslock = "overload(control, esc)";
+          insert = "S-insert";
+        };
+      };
+    };
+    kmscon = {
+      enable = true;
+      hwRender = true;
+      fonts = [
+        {
+          name = "MesloLGS NF";
+          package = pkgs.meslo-lgs-nf;
+        }
+      ];
+      extraConfig = "font-size=14";
+      extraOptions = "--term xterm-256color";
+    };
     xserver.xkb.variant = "colemak";
-    xserver.xkb.options = mkForce "ctrl:swapcaps";
   };
 
   time.timeZone = mkForce "Europe/Istanbul";

@@ -17,7 +17,7 @@ in
   config = mkIf cfg.enable {
     console = {
       font = "Lat2-Terminus16";
-      keyMap = mkForce "us";
+      keyMap = mkForce "colemak";
     };
 
     environment.variables = {

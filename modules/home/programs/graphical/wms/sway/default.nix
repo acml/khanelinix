@@ -153,6 +153,7 @@ in
           input = {
             "*" = {
               xkb_layout = "us";
+              xkb_variant = "colemak";
               xkb_numlock = "enabled";
               # repeat_delay = 0;
               # repeat_rate = 50;
@@ -183,6 +184,9 @@ in
 
         extraConfigEarly = cfg.prependConfig;
         inherit (cfg) extraSessionCommands;
+        extraOptions = [
+          "--unsupported-gpu" # Required for Nvidia
+        ];
 
         systemd = {
           enable = !(osConfig.khanelinix.programs.graphical.wms.sway.withUWSM or false);

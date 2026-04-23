@@ -18,6 +18,7 @@ in
       name = "ahmet";
       email = "ozgezer@gmail.com";
       fullName = "Ahmet Cemal Özgezer";
+      # icon = mkOpt (types.nullOr types.package) defaultIcon "The profile picture to use for the user.";
     };
 
     environments = {
@@ -29,7 +30,9 @@ in
         addons.looking-glass-client = enabled;
         bars = {
           ashell = {
-            fullSizeOutputs = [ "eDP-1" ];
+            fullSizeOutputs = [
+              "eDP-1"
+            ];
             condensedOutputs = [
               "DP-7"
               "DP-8"
@@ -39,7 +42,9 @@ in
           waybar = {
             enableDebug = false;
             # enableInspect = true;
-            fullSizeOutputs = [ "eDP-1" ];
+            fullSizeOutputs = [
+              "eDP-1"
+            ];
             condensedOutputs = [
               "DP-7"
               "DP-8"
@@ -80,40 +85,36 @@ in
             enableDebug = false;
 
             settings = {
+              cursor = {
+                no_hardware_cursors = true;
+                enable_hyprcursor = lib.mkForce false;
+              };
+
               input = {
                 kb_layout = "us";
                 kb_variant = "colemak";
-                kb_options = "ctrl:swapcaps";
               };
 
               monitorv2 = [
                 {
-                  output = "DP-9";
-                  mode = "1920x1080@60";
-                  position = "1920x0";
-                  scale = 1;
-                  bitdepth = 10;
-                }
-                {
-                  output = "eDP-1";
-                  mode = "1920x1080@60";
-                  position = "1920x1080";
-                  scale = 1;
-                  bitdepth = 10;
+                  output = "DP-7";
+                  mode = "preferred";
+                  position = "0x0";
                 }
                 {
                   output = "DP-8";
-                  mode = "1680x1050@60";
-                  position = "3840x30";
-                  scale = 1;
-                  bitdepth = 10;
+                  mode = "preferred";
+                  position = "1920x0";
                 }
                 {
-                  output = "DP-7";
-                  mode = "1920x1080@60";
-                  position = "0x0";
-                  scale = 1;
-                  bitdepth = 10;
+                  output = "DP-9";
+                  mode = "preferred";
+                  position = "3840x0";
+                }
+                {
+                  output = "eDP-1";
+                  mode = "preferred";
+                  position = "3840x1050";
                 }
               ];
 
@@ -122,10 +123,10 @@ in
               ];
 
               workspace = [
-                "1, monitor:DP-9, persistent:true, default:true"
+                "1, monitor:DP-7, persistent:true, default:true"
                 "2, monitor:eDP-1, persistent:true, default:true"
                 "3, monitor:DP-8, persistent:true, default:true"
-                "4, monitor:DP-7, persistent:true, default:true"
+                "4, monitor:DP-9, persistent:true, default:true"
                 "5, monitor:eDP-1, persistent:true"
                 "6, monitor:eDP-1, persistent:true"
                 "7, monitor:eDP-1, persistent:true"
@@ -140,51 +141,8 @@ in
 
             settings = {
               outputs = {
-                "DP-9" = {
-                  name = "DP-9";
-                  mode = {
-                    width = 1920;
-                    height = 1080;
-                    refresh = 60.0;
-                  };
-                  position = {
-                    x = 1920;
-                    y = 0;
-                  };
-                  scale = 1.0;
-                };
-
-                "eDP-1" = {
-                  name = "eDP-1";
-                  mode = {
-                    width = 1920;
-                    height = 1080;
-                    refresh = 60.0;
-                  };
-                  position = {
-                    x = 1920;
-                    y = 1080;
-                  };
-                  scale = 1.0;
-                  focus-at-startup = true;
-                };
-
-                "DP-8" = {
-                  name = "DP-8";
-                  mode = {
-                    width = 1680;
-                    height = 1050;
-                    refresh = 60.0;
-                  };
-                  position = {
-                    x = 3840;
-                    y = 30;
-                  };
-                  scale = 1.0;
-                };
-
                 "DP-7" = {
-                  name = "DP-7";
+                  name = "DP-4";
                   mode = {
                     width = 1920;
                     height = 1080;
@@ -194,13 +152,52 @@ in
                     x = 0;
                     y = 0;
                   };
-                  scale = 1.0;
+                };
+
+                "DP-8" = {
+                  name = "DP-5";
+                  mode = {
+                    width = 1920;
+                    height = 1080;
+                    refresh = 60.0;
+                  };
+                  position = {
+                    x = 1920;
+                    y = 0;
+                  };
+                };
+
+                "DP-9" = {
+                  name = "DP-6";
+                  mode = {
+                    width = 1680;
+                    height = 1050;
+                    refresh = 59.883;
+                  };
+                  position = {
+                    x = 3840;
+                    y = 0;
+                  };
+                };
+
+                "eDP-1" = {
+                  name = "Unknown-1";
+                  mode = {
+                    width = 1920;
+                    height = 1080;
+                    refresh = 60.0;
+                  };
+                  position = {
+                    x = 3840;
+                    y = 1050;
+                  };
+                  focus-at-startup = true;
                 };
               };
 
               workspaces = {
                 "1" = {
-                  open-on-output = "DP-9";
+                  open-on-output = "DP-7";
                 };
               }
               // lib.genAttrs (map toString (lib.range 2 9)) (_: {
@@ -219,31 +216,28 @@ in
 
             settings = {
               output = {
-                "DP-9" = {
-                  resolution = "1920x1080";
-                  position = "1920,0";
-                  scale = "1";
-                };
-                "eDP-1" = {
-                  resolution = "1920x1080";
-                  position = "1920,1080";
-                };
-                "DP-8" = {
-                  resolution = "1680x1050";
-                  position = "3840,30";
-                  scale = "1";
-                };
                 "DP-7" = {
                   resolution = "1920x1080";
                   position = "0,0";
-                  scale = "1";
+                };
+                "DP-8" = {
+                  resolution = "1920x1080";
+                  position = "1920,0";
+                };
+                "DP-9" = {
+                  resolution = "1680x1050";
+                  position = "3840,0";
+                };
+                "eDP-1" = {
+                  resolution = "1920x1080";
+                  position = "3840,1050";
                 };
               };
 
               workspaceOutputAssign = [
                 {
                   workspace = "1";
-                  output = "DP-9";
+                  output = "DP-7";
                 }
                 {
                   workspace = "2";
@@ -255,7 +249,7 @@ in
                 }
                 {
                   workspace = "4";
-                  output = "DP-7";
+                  output = "DP-9";
                 }
                 {
                   workspace = "5";
@@ -313,11 +307,7 @@ in
       hyprpaper = {
         monitors = [
           {
-            name = "DP-9";
-            wallpaper = wallpaperPath wallpaperCfg.primary;
-          }
-          {
-            name = "eDP-1";
+            name = "DP-7";
             wallpaper = wallpaperPath wallpaperCfg.secondary;
           }
           {
@@ -325,8 +315,12 @@ in
             wallpaper = wallpaperPath wallpaperCfg.secondary;
           }
           {
-            name = "DP-7";
+            name = "DP-9";
             wallpaper = wallpaperPath wallpaperCfg.secondary;
+          }
+          {
+            name = "eDP-1";
+            wallpaper = wallpaperPath wallpaperCfg.primary;
           }
         ];
 
@@ -424,10 +418,10 @@ in
       };
     in
     [
-      (mkBackground "eDP-1" wallpaperCfg.secondary)
-      (mkBackground "DP-9" wallpaperCfg.primary)
-      (mkBackground "DP-8" wallpaperCfg.secondary)
       (mkBackground "DP-7" wallpaperCfg.secondary)
+      (mkBackground "DP-8" wallpaperCfg.secondary)
+      (mkBackground "DP-9" wallpaperCfg.secondary)
+      (mkBackground "eDP-1" wallpaperCfg.primary)
     ]
   );
 

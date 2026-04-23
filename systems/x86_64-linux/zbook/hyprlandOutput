@@ -1,37 +1,33 @@
-# monitor=DP-9,	1920x1080@60,	1920x0,	1, bitdepth, 10
-monitorv2 {
-  output = DP-9
-  mode = 1920x1080@60
-  position = 1920x0
-  scale = 1
-  bitdepth = 10
-}
-
-monitorv2 {
-  output = eDP-1
-  mode = 1920x1080@60
-  position = 1920x1080
-  scale = 1
-  bitdepth = 10
-}
-
-monitorv2 {
-  output = DP-8
-  mode = 1680x1050@60
-  position = 3840x30
-  scale = 1
-  bitdepth = 10
-}
-
+# monitor=DP-8,	1920x1080@60,	1920x0,	1, bitdepth, 10
 monitorv2 {
   output = DP-7
   mode = 1920x1080@60
   position = 0x0
   scale = 1
-  bitdepth = 10
 }
 
-workspace = name:hello, monitor:eDP-1, defafult:true
+monitorv2 {
+  output = DP-8
+  mode = 1920x1080@60
+  position = 1920x0
+  scale = 1
+}
+
+monitorv2 {
+  output = DP-9
+  mode = preferred
+  position = 3840x0
+  scale = 1
+}
+
+monitorv2 {
+  output = eDP-1
+  mode = 1920x1080@60
+  position = 3840x1050
+  scale = 1
+}
+
+workspace = name:hello, monitor:Unknown-1, defafult:true
 windowrule = match:class ^(nwg-hello)$, workspace name:hello
 
 env = CLUTTER_BACKEND,"wayland"
