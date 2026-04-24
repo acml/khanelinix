@@ -142,7 +142,7 @@ in
             settings = {
               outputs = {
                 "DP-7" = {
-                  name = "DP-4";
+                  name = "DP-7";
                   mode = {
                     width = 1920;
                     height = 1080;
@@ -155,7 +155,7 @@ in
                 };
 
                 "DP-8" = {
-                  name = "DP-5";
+                  name = "DP-8";
                   mode = {
                     width = 1920;
                     height = 1080;
@@ -168,7 +168,7 @@ in
                 };
 
                 "DP-9" = {
-                  name = "DP-6";
+                  name = "DP-9";
                   mode = {
                     width = 1680;
                     height = 1050;
@@ -181,7 +181,7 @@ in
                 };
 
                 "eDP-1" = {
-                  name = "Unknown-1";
+                  name = "eDP-1";
                   mode = {
                     width = 1920;
                     height = 1080;
@@ -197,7 +197,7 @@ in
 
               workspaces = {
                 "1" = {
-                  open-on-output = "DP-7";
+                  open-on-output = "DP-9";
                 };
               }
               // lib.genAttrs (map toString (lib.range 2 9)) (_: {
