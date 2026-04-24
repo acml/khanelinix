@@ -70,7 +70,7 @@
 
       fancy-splash-image (funcall
                           (lambda (choices) (elt
-                                             choices (random (length choices))))
+                                        choices (random (length choices))))
                           (directory-files (concat (expand-file-name
                                                     doom-user-dir) "splash")
                                            t "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)" t))
@@ -640,11 +640,14 @@ the sequences will be lost."
       :desc "Swap Left"  "<" #'+workspace/swap-left
       :desc "Swap Right" ">" #'+workspace/swap-right)
 
-(use-package! proced :commands (proced)
-              :init
-              (setq proced-auto-update-flag t
-                    proced-auto-update-interval 1
-                    proced-descend t))
+(use-package! proced
+  :commands (proced)
+  :custom
+  (proced-enable-color-flag t)
+  (proced-tree-flag t)
+  (proced-auto-update-flag 'visible)
+  (proced-auto-update-interval 1)
+  (proced-descent t))
 
 (after! projectile
   (setq ;; projectile-switch-project-action 'projectile-dired
@@ -786,13 +789,16 @@ will ensure are ignored")
 
 (setq which-key-allow-multiple-replacements t)
 (after! which-key
-  (pushnew! which-key-replacement-alist
-            ;; rename winum-select-window-1 entry to 1..9
-            '(("\\(.*\\)1" . "winum-select-window-1") . ("\\11..9" . "Switch to window 1..9"))
-            ;; hide winum-select-window-[2-9] entries
-            '((nil . "winum-select-window-[2-9]") . t)
-            '(("" . "\\`+?evil[-:/]?\\(?:a-\\)?\\(.*\\)") . (nil . " \\1"))
-            '(("\\`g s" . "\\`evilem--?motion-\\(.*\\)") . (nil . " \\1"))))
+  ;; rename winum-select-window-1 entry to 1..9
+  (cl-pushnew '(("\\(.*\\)1" . "winum-select-window-1") . ("\\11..9" . "Switch to window 1..9"))
+              which-key-replacement-alist)
+  ;; hide winum-select-window-[2-9] entries
+  (cl-pushnew '((nil . "winum-select-window-[2-9]") . t)
+              which-key-replacement-alist)
+  (cl-pushnew '(("" . "\\`+?evil[-:/]?\\(?:a-\\)?\\(.*\\)") . (nil . " \\1"))
+              which-key-replacement-alist)
+  (cl-pushnew '(("\\`g s" . "\\`evilem--?motion-\\(.*\\)") . (nil . " \\1"))
+              which-key-replacement-alist))
 
 ;; text mode directory tree
 (after! ztree
