@@ -12,8 +12,6 @@ in
     ./disks.nix
     ./hardware.nix
     ./network.nix
-    ./nvidia.nix
-    ./opengl.nix
     # ./specializations.nix
   ];
 

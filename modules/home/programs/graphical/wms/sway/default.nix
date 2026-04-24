@@ -184,9 +184,9 @@ in
 
         extraConfigEarly = cfg.prependConfig;
         inherit (cfg) extraSessionCommands;
-        extraOptions = [
-          "--unsupported-gpu" # Required for Nvidia
-        ];
+        # extraOptions = [
+        #   "--unsupported-gpu" # Required for Nvidia
+        # ];
 
         systemd = {
           enable = !(osConfig.khanelinix.programs.graphical.wms.sway.withUWSM or false);
