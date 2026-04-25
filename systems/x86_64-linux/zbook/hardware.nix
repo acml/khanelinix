@@ -35,7 +35,6 @@
     # Required for NVENC device nodes
     kernelModules = [ "nvidia_uvm" ];
 
-    # Alternative: use boot.kernelParams
     kernelParams = [
       "nvidia_drm.modeset=1"
       "nvidia_drm.fbdev=1" # For framebuffer support
@@ -99,7 +98,7 @@
       # Dynamic Boost. It is a technology found in NVIDIA Max-Q design laptops with RTX GPUs.
       # It intelligently and automatically shifts power between
       # the CPU and GPU in real-time based on the workload of your game or application.
-      dynamicBoost.enable = lib.mkForce true;
+      dynamicBoost.enable = lib.mkForce false;
 
       # Use the NVidia open source kernel module (not to be confused with the
       # independent third-party "nouveau" open source driver).
@@ -153,5 +152,8 @@
   };
 
   # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = [
+    "modesetting"
+    "nvidia"
+  ];
 }
