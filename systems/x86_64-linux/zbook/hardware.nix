@@ -83,7 +83,7 @@
 
       # forceFullCompositionPipeline = true;
       # Modesetting is required.
-      modesetting.enable = lib.mkForce true;
+      # modesetting.enable = lib.mkForce true;
 
       # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
       # Enable this if you have graphical corruption issues or application crashes after waking
@@ -98,7 +98,7 @@
       # Dynamic Boost. It is a technology found in NVIDIA Max-Q design laptops with RTX GPUs.
       # It intelligently and automatically shifts power between
       # the CPU and GPU in real-time based on the workload of your game or application.
-      dynamicBoost.enable = lib.mkForce false;
+      dynamicBoost.enable = lib.mkForce true;
 
       # Use the NVidia open source kernel module (not to be confused with the
       # independent third-party "nouveau" open source driver).
@@ -106,14 +106,14 @@
       # supported GPUs is at:
       # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus
       # Only available from driver 515.43.04+
-      open = lib.mkForce true;
+      # open = lib.mkForce true;
 
       # Enable the Nvidia settings menu,
       # accessible via `nvidia-settings`.
-      nvidiaSettings = lib.mkForce false;
+      # nvidiaSettings = lib.mkForce false;
 
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
-      package = config.boot.kernelPackages.nvidiaPackages.production;
+      # package = config.boot.kernelPackages.nvidiaPackages.production;
       # package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
       #   version = "570.133.07";
       #   # this is the third one it will complain is wrong
@@ -153,7 +153,7 @@
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = [
-    "modesetting"
+    # "modesetting"
     "nvidia"
   ];
 }
