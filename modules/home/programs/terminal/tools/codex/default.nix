@@ -59,7 +59,8 @@ in
         model = "gpt-5.5";
         model_reasoning_effort = "medium";
         plan_mode_reasoning_effort = "medium";
-        service_tier = "fast";
+        # NOTE: 5.5 is already 2x cost
+        # service_tier = "fast";
 
         notify =
           let
