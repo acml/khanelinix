@@ -821,7 +821,9 @@ clicked."
   (proced-auto-update-interval 1)
   (proced-descent t))
 
-(after! projectile
+(use-package! projectile
+  :commands (+default/discover-projects projectile-register-project-type)
+  :init
   (setq ;; projectile-switch-project-action 'projectile-dired
    projectile-project-root-functions '(projectile-root-local
                                        projectile-root-marked
