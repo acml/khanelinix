@@ -52,6 +52,9 @@ in
               "playback.props" = {
                 "node.name" = "effect_output.rnnoise";
                 "media.class" = "Audio/Source";
+                # Citrix needs stable source metadata to derive a device/group ID.
+                "device.string" = "effect_output.rnnoise";
+                "device.bus" = "virtual";
               };
             };
           }
