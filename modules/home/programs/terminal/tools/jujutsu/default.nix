@@ -68,6 +68,12 @@ in
           };
           ui = {
             default-command = "log";
+            diff-editor = [
+              "nvim"
+              "-c"
+              "DiffEditor $left $right $output"
+            ];
+            diff-instructions = false;
           };
         };
       };
