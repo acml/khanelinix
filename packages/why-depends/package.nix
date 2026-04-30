@@ -24,10 +24,10 @@ python3Packages.buildPythonApplication rec {
   propagatedBuildInputs = [ ];
 
   checkPhase = ''
-    python -m py_compile ${src}
     ruff check ${src}
     cp ${./why-depends_test.py} $PWD/why-depends_test.py
     cp ${src} $PWD/why-depends.py
+    python -m py_compile $PWD/why-depends.py
     python why-depends_test.py
   '';
 
