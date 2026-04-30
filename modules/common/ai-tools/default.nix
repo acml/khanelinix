@@ -38,6 +38,15 @@ in
     inherit skillsDir;
   };
 
+  githubCopilotCli = {
+    agents = aiAgents.toCopilotMarkdown;
+    commandSkills = aiCommands.toCopilotSkills;
+    inherit
+      base
+      skills
+      ;
+  };
+
   opencode = {
     commands = aiCommands.toOpenCodeMarkdown;
     inherit agents;

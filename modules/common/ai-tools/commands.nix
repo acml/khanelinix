@@ -83,7 +83,18 @@ let
     ${lib.trim command.prompt}
   '';
 
+  renderCopilotSkill = command: ''
+    ---
+    name: ${builtins.toJSON command.commandName}
+    description: ${builtins.toJSON (command.description or "AI command")}
+    ---
+
+    ${lib.trim command.prompt}
+  '';
+
   toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeMarkdown) commands;
+
+  toCopilotSkills = lib.mapAttrs (_name: renderCopilotSkill) commands;
 
   toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeMarkdown) commands;
 
@@ -96,8 +107,10 @@ in
   inherit
     commands
     renderClaudeMarkdown
+    renderCopilotSkill
     renderOpenCodeMarkdown
     toClaudeMarkdown
+    toCopilotSkills
     toOpenCodeMarkdown
     toGeminiCommands
     ;

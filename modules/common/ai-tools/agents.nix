@@ -129,7 +129,21 @@ let
     ${lib.trim agent.content}
   '';
 
+  renderCopilotFrontmatter = agent: ''
+    ---
+    name: ${builtins.toJSON agent.name}
+    description: ${builtins.toJSON agent.description}
+    ---
+  '';
+
+  renderCopilotAgent = agent: ''
+    ${lib.trim (renderCopilotFrontmatter agent)}
+
+    ${lib.trim agent.content}
+  '';
+
   toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) agents;
+  toCopilotMarkdown = lib.mapAttrs (_name: renderCopilotAgent) agents;
   toGeminiAgents = lib.mapAttrs (_name: agent: {
     prompt = agent.content;
     description = agent.description or "AI agent";
@@ -140,8 +154,10 @@ in
   inherit
     agents
     renderClaudeAgent
+    renderCopilotAgent
     renderOpenCodeAgent
     toClaudeMarkdown
+    toCopilotMarkdown
     toGeminiAgents
     toOpenCodeMarkdown
     ;
