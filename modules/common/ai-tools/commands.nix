@@ -50,10 +50,16 @@ let
     in
     ''
       ---
-      ${lib.optionalString (command.allowedTools != null) "allowed-tools: ${command.allowedTools}"}
-      ${lib.optionalString (command.argumentHint != null) "argument-hint: ${command.argumentHint}"}
-      ${lib.optionalString (command.description != null) "description: ${command.description}"}
-      ${lib.optionalString (model != null) "model: ${model}"}
+      ${lib.optionalString (
+        command.allowedTools != null
+      ) "allowed-tools: ${builtins.toJSON command.allowedTools}"}
+      ${lib.optionalString (
+        command.argumentHint != null
+      ) "argument-hint: ${builtins.toJSON command.argumentHint}"}
+      ${lib.optionalString (
+        command.description != null
+      ) "description: ${builtins.toJSON command.description}"}
+      ${lib.optionalString (model != null) "model: ${builtins.toJSON model}"}
       ---
     '';
 
