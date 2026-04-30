@@ -27,6 +27,8 @@ in
 
     programs = {
       graphical = {
+        editors.emacs.enable = true;
+        editors.vscode.enable = false;
         addons.looking-glass-client = enabled;
         bars = {
           ashell = {
@@ -275,7 +277,6 @@ in
 
       terminal = {
         # No need for all these on his computer
-        editors.emacs.enable = true;
         editors.neovim.enable = true;
         emulators = {
           alacritty.enable = false;

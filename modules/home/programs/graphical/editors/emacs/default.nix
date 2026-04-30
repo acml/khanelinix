@@ -6,7 +6,7 @@
 }:
 let
 
-  cfg = config.khanelinix.programs.terminal.editors.emacs;
+  cfg = config.khanelinix.programs.graphical.editors.emacs;
 
   inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux;
 
@@ -244,7 +244,7 @@ let
   };
 in
 {
-  options.khanelinix.programs.terminal.editors.emacs = {
+  options.khanelinix.programs.graphical.editors.emacs = {
     enable = lib.mkEnableOption "emacs";
   };
 
