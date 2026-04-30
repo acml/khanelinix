@@ -183,6 +183,12 @@ in
       extraConfig = "font-size=14";
       extraOptions = "--term xterm-256color";
     };
+    logind.settings.Login = {
+      HandleLidSwitch = "poweroff";
+      HandleLidSwitchExternalPower = "suspend";
+      HandleLidSwitchDocked = "suspend";
+      # one of "ignore", "poweroff", "reboot", "halt", "kexec", "suspend", "hibernate", "hybrid-sleep", "suspend-then-hibernate", "lock"
+    };
     xserver.xkb.variant = "colemak";
   };
 
