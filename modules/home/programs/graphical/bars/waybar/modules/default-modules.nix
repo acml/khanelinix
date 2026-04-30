@@ -245,7 +245,7 @@ in
       ];
     };
     scroll-step = 1;
-    on-click = "pavucontrol";
+    on-click = "pwvucontrol";
     ignored-sinks = [ "Easy Effects Sink" ];
   };
 
