@@ -78,6 +78,7 @@ in
           podman-tui
         ]
         ++ lib.optionals cfg.nixEnable [
+          devenv
           hydra-check
           khanelinix.build-by-path
           nix-bisect
