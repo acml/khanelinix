@@ -4,7 +4,7 @@ let
   citrixPatch = prev.fetchpatch2 {
     name = "nixpkgs-pr-512848-citrix-workspace";
     url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/512848.patch";
-    hash = "sha256-iZ4JbutlV9Et+f22oD+862Do7ZX7RXDLrEUmptdw3qs=";
+    hash = "sha256-w691Gs1NttPvkY99J4u6HiB8XC8BEWhdm72lqYzP2dQ=";
   };
 
   patchedNixpkgs = prev.applyPatches {
