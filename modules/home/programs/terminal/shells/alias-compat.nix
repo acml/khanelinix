@@ -195,14 +195,21 @@ let
     let
       trimmed = trim value;
       body = if hasWrappedFunction trimmed then unwrapFunctionBody trimmed else trimmed;
+      sessionVarsPathMatch = builtins.match ".*source \"([^\"]*hm-session-vars\\.sh)\".*" trimmed;
       fishSessionVarsPath =
-        lib.replaceStrings
-          [ "__HM_ZSH_SESS_VARS_SOURCED=0 source " "hm-session-vars.sh" ]
-          [ "" "hm-session-vars.fish" ]
-          trimmed;
+        if sessionVarsPathMatch != null then
+          lib.replaceStrings [ "hm-session-vars.sh" ] [ "hm-session-vars.fish" ] (
+            builtins.elemAt sessionVarsPathMatch 0
+          )
+        else
+          lib.replaceStrings
+            [ "__HM_ZSH_SESS_VARS_SOURCED=0 source " "hm-session-vars.sh" ]
+            [ "" "hm-session-vars.fish" ]
+            trimmed;
     in
     if name == "hmvar-reload" then
       ''
+        set -e __HM_SESS_VARS_SOURCED
         if test -f ${fishSessionVarsPath}
           source ${fishSessionVarsPath}
         end
@@ -220,7 +227,9 @@ in
     ;
 
   translateAliasMap = lib.mapAttrs (_: translatedAliasValue);
-  translateFishAliasMap = aliases: lib.filterAttrs (_: value: !(isFishFunctionAlias value)) aliases;
+  translateFishAliasMap =
+    aliases:
+    lib.filterAttrs (name: value: name != "hmvar-reload" && !(isFishFunctionAlias value)) aliases;
   translateFishFunctions =
     aliases:
     lib.mapAttrs' (
@@ -228,5 +237,5 @@ in
       lib.nameValuePair name {
         body = fishBodyForAlias name value;
       }
-    ) (lib.filterAttrs (_: isFishFunctionAlias) aliases);
+    ) (lib.filterAttrs (name: value: name == "hmvar-reload" || isFishFunctionAlias value) aliases);
 }

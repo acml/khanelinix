@@ -49,11 +49,27 @@
         };
       };
 
-      pyright = {
-        command = [ (lib.getExe pkgs.pyright) ];
+      basedpyright = {
+        command = [
+          (lib.getExe' pkgs.basedpyright "basedpyright-langserver")
+          "--stdio"
+        ];
         extensions = [
           ".py"
           ".pyi"
+          ".pyw"
+        ];
+      };
+
+      ruff = {
+        command = [
+          (lib.getExe pkgs.ruff)
+          "server"
+        ];
+        extensions = [
+          ".py"
+          ".pyi"
+          ".pyw"
         ];
       };
 
@@ -69,7 +85,15 @@
       };
 
       clangd = {
-        command = [ (lib.getExe' pkgs.clang-tools "clangd") ];
+        command = [
+          (lib.getExe' pkgs.clang-tools "clangd")
+          "--background-index"
+          "--clang-tidy"
+          "--header-insertion=iwyu"
+          "--completion-style=detailed"
+          "--function-arg-placeholders"
+          "--fallback-style=llvm"
+        ];
         extensions = [
           ".c"
           ".cpp"
@@ -82,6 +106,11 @@
           ".hxx"
           ".h++"
         ];
+      };
+
+      fish-lsp = {
+        command = [ (lib.getExe pkgs.fish-lsp) ];
+        extensions = [ ".fish" ];
       };
 
       typescript = {
@@ -116,8 +145,7 @@
       };
 
       csharp = {
-        # FIXME: broken nixpkgs
-        # command = [ (lib.getExe pkgs.roslyn-ls) ];
+        command = [ (lib.getExe pkgs.roslyn-ls) ];
         extensions = [
           ".cs"
           ".csx"
@@ -154,6 +182,14 @@
           "stdio"
         ];
         extensions = [ ".toml" ];
+      };
+
+      marksman = {
+        command = [ (lib.getExe pkgs.marksman) ];
+        extensions = [
+          ".md"
+          ".mdx"
+        ];
       };
     };
   };
