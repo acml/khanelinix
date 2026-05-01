@@ -130,7 +130,7 @@ in
           flake = "nix flake";
           nix = "nix -vL";
           gsed = "${getExe pkgs.gnused}";
-          hmvar-reload = ''__HM_ZSH_SESS_VARS_SOURCED=0 source "/etc/profiles/per-user/${config.khanelinix.user.name}/etc/profile.d/hm-session-vars.sh"'';
+          hmvar-reload = ''unset __HM_SESS_VARS_SOURCED; source "/etc/profiles/per-user/${config.khanelinix.user.name}/etc/profile.d/hm-session-vars.sh"'';
 
           # File management
           rcp = "${getExe pkgs.rsync} -rahP --mkpath --modify-window=1"; # Rsync copy keeping all attributes,timestamps,permissions"
