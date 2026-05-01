@@ -1288,6 +1288,25 @@ you're done. This can be called from an external shell script."
                 (evil-define-key '(normal visual insert emacs) gt-buffer-render-local-map
                   "q" 'kill-buffer-and-window)))))
 
+;; credit: yorickvP on Github
+(when (and (display-graphic-p)
+           (string= (getenv "XDG_SESSION_TYPE") "wayland"))
+  (setq wl-copy-process nil)
+  (defun wl-copy (text)
+    (setq wl-copy-process (make-process :name "wl-copy"
+                                        :buffer nil
+                                        :command '("wl-copy" "-f" "-n")
+                                        :connection-type 'pipe
+                                        :noquery t))
+    (process-send-string wl-copy-process text)
+    (process-send-eof wl-copy-process))
+  (defun wl-paste ()
+    (if (and wl-copy-process (process-live-p wl-copy-process))
+        nil ; should return nil if we're the current paste owner
+      (shell-command-to-string "wl-paste -n | tr -d \r")))
+  (setq interprogram-cut-function 'wl-copy
+        interprogram-paste-function 'wl-paste))
+
 ;; Load a file with the same name as the computer’s name. Just keep on going if
 ;; the requisite file isn't there.
 (load! (car (split-string (system-name) "\\.")) nil t)
