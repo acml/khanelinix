@@ -45,6 +45,15 @@ let
       skillsDir
     else
       builtins.filterSource (path: _: shouldKeepPath path) skillsDir;
+
+  skillsAttrsForHarness =
+    harnessName:
+    let
+      harnessSkills = skillsForHarness harnessName;
+    in
+    lib.mapAttrs (name: _: harnessSkills + "/${name}") (
+      lib.filterAttrs (_: type: type == "directory") (builtins.readDir harnessSkills)
+    );
 in
 {
   inherit
@@ -75,7 +84,8 @@ in
   githubCopilotCli = {
     agents = aiAgents.toCopilotMarkdown;
     commandSkills = aiCommands.toCopilotSkills;
-    skills = skillsForHarness "githubCopilotCli";
+    context = base;
+    skills = skillsAttrsForHarness "githubCopilotCli" // aiCommands.toCopilotSkills;
     inherit base;
   };
 
