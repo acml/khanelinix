@@ -136,6 +136,8 @@ in
     WLR_NO_HARDWARE_CURSORS = "1";
   };
 
+  environment.systemPackages = [ pkgs.brightnessctl ];
+
   nix.settings = {
     cores = 8;
     max-jobs = 8;
@@ -153,7 +155,7 @@ in
 
   powerManagement.enable = true;
 
-  powerManagement.powertop.enable = true;
+  # powerManagement.powertop.enable = true;
   powerManagement.powertop.postStart = ''
     HIDDEVICES=$(ls /sys/bus/usb/drivers/usbhid | grep -oE '^[0-9]+-[0-9\.]+' | sort -u)
     for i in $HIDDEVICES; do
@@ -163,6 +165,22 @@ in
   '';
 
   services = {
+    upower = {
+      enable = true;
+      noPollBatteries = true;
+    };
+    power-profiles-daemon.enable = lib.mkForce false;
+    auto-cpufreq.enable = true;
+    auto-cpufreq.settings = {
+      battery = {
+        governor = "powersave";
+        turbo = "never";
+      };
+      charger = {
+        governor = "performance";
+        turbo = "auto";
+      };
+    };
     displayManager.defaultSession = "hyprland-uwsm";
     irqbalance.enable = mkForce false;
     keyd = {

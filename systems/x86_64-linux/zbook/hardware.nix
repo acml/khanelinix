@@ -93,7 +93,7 @@
 
       # Fine-grained power management. Turns off GPU when not in use.
       # Experimental and only works on modern Nvidia GPUs (Turing or newer).
-      powerManagement.finegrained = lib.mkForce false;
+      powerManagement.finegrained = lib.mkForce true;
 
       # Dynamic Boost. It is a technology found in NVIDIA Max-Q design laptops with RTX GPUs.
       # It intelligently and automatically shifts power between
@@ -156,4 +156,34 @@
     # "modesetting"
     "nvidia"
   ];
+
+  # Set up a udev rule to create named symlinks for the pci paths.
+  #
+  # This is necessary because wlroots splits the DRM_DEVICES on
+  # `:`, which is part of the pci path.
+  services.udev.packages =
+    let
+      pciPath =
+        xorgBusId:
+        let
+          components = lib.drop 1 (lib.splitString ":" xorgBusId);
+          toHex = i: lib.toLower (lib.toHexString (lib.toInt i));
+
+          domain = "0000"; # Apparently the domain is practically always set to 0000
+          bus = lib.fixedWidthString 2 "0" (toHex (builtins.elemAt components 0));
+          device = lib.fixedWidthString 2 "0" (toHex (builtins.elemAt components 1));
+          function = builtins.elemAt components 2; # The function is supposedly a decimal number
+        in
+        "dri/by-path/pci-${domain}:${bus}:${device}.${function}-card";
+
+      pCfg = config.hardware.nvidia.prime;
+      igpuPath = pciPath (if pCfg.intelBusId != "" then pCfg.intelBusId else pCfg.amdgpuBusId);
+      dgpuPath = pciPath pCfg.nvidiaBusId;
+    in
+    (lib.singleton (
+      pkgs.writeTextDir "lib/udev/rules.d/61-gpu-offload.rules" ''
+        SYMLINK=="${igpuPath}", SYMLINK+="dri/igpu1"
+        SYMLINK=="${dgpuPath}", SYMLINK+="dri/dgpu1"
+      ''
+    ));
 }
