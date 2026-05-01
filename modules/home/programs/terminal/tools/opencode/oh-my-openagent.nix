@@ -34,6 +34,7 @@ in
         testRunnerModel = aiTools.agents.test-runner.model.opencode;
         quickModel = "openai/gpt-5.3-codex-spark";
         nanoModel = "openai/gpt-5.4-nano";
+        opencodeSkillsPath = toString config.programs.opencode.skills;
 
         deliberateFallbackModels = [
           {
@@ -52,7 +53,7 @@ in
           skills = lib.optionalAttrs (opencodeSkills != null) {
             sources = [
               {
-                path = toString aiTools.skillsDir;
+                path = opencodeSkillsPath;
                 recursive = true;
               }
             ];

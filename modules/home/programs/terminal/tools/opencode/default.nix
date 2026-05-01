@@ -1,14 +1,19 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
-  inherit (lib) mkDefault mkIf mkEnableOption;
+  inherit (lib)
+    mkDefault
+    mkEnableOption
+    mkIf
+    ;
 
   cfg = config.khanelinix.programs.terminal.tools.opencode;
 
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
 in
 {
   imports = [
@@ -99,7 +104,7 @@ in
           _: command: aiToolCommands.renderOpenCodeMarkdown command
         ) aiTools.commands;
         agents = lib.mapAttrs (_: agent: aiToolAgents.renderOpenCodeAgent agent) aiTools.agents;
-        skills = aiTools.skillsDir;
+        inherit (aiTools.opencode) skills;
 
         context = builtins.readFile aiTools.base;
       };

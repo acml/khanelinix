@@ -6,12 +6,45 @@ let
 
   base = ./base.md;
   skillsDir = ./skills;
-  skills = lib.mapAttrs (name: _: skillsDir + "/${name}") (
-    lib.filterAttrs (_: type: type == "directory") (builtins.readDir skillsDir)
-  );
+
+  allSkills = lib.filterAttrs (_: type: type == "directory") (builtins.readDir skillsDir);
+  skills = lib.mapAttrs (name: _: skillsDir + "/${name}") allSkills;
 
   inherit (aiCommands) commands;
   inherit (aiAgents) agents;
+
+  harnessSkillFilters = {
+    codex = {
+      exclude = [
+        "skill-creator"
+      ];
+    };
+
+    claudeCode = {
+      exclude = [
+        "skill-creator"
+      ];
+    };
+  };
+
+  skillsForHarness =
+    harnessName:
+    let
+      exclude = (harnessSkillFilters.${harnessName} or { }).exclude or [ ];
+      shouldKeep = name: !(lib.elem name exclude);
+
+      shouldKeepPath =
+        path:
+        let
+          relPath = lib.removePrefix (toString skillsDir + "/") (toString path);
+          topLevel = if relPath == "" then "" else lib.head (lib.splitString "/" relPath);
+        in
+        topLevel == "" || shouldKeep topLevel;
+    in
+    if exclude == [ ] then
+      skillsDir
+    else
+      builtins.filterSource (path: _: shouldKeepPath path) skillsDir;
 in
 {
   inherit
@@ -25,32 +58,36 @@ in
   claudeCode = {
     commands = aiCommands.toClaudeMarkdown;
     agents = aiAgents.toClaudeMarkdown;
+    skills = skillsForHarness "claudeCode";
     inherit skillsDir;
   };
 
   geminiCli = {
     commands = aiCommands.toGeminiCommands;
     agents = aiAgents.toGeminiAgents;
-    inherit skills;
+    skills = skillsForHarness "geminiCli";
   };
 
   codex = {
-    inherit skillsDir;
+    skills = skillsForHarness "codex";
   };
 
   githubCopilotCli = {
     agents = aiAgents.toCopilotMarkdown;
     commandSkills = aiCommands.toCopilotSkills;
-    inherit
-      base
-      skills
-      ;
+    skills = skillsForHarness "githubCopilotCli";
+    inherit base;
   };
 
   opencode = {
     commands = aiCommands.toOpenCodeMarkdown;
+    skills = skillsForHarness "opencode";
     inherit agents;
     renderAgents = aiAgents.toOpenCodeMarkdown;
+  };
+
+  piCodingAgent = {
+    skills = skillsForHarness "piCodingAgent";
   };
 
   mergeCommands = existingCommands: newCommands: existingCommands // newCommands;

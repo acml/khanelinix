@@ -5,11 +5,13 @@
   ...
 }:
 let
-  inherit (lib) mkEnableOption mkIf;
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    ;
 
   cfg = config.khanelinix.programs.terminal.tools.github-copilot-cli;
 
-  codexEnabled = config.khanelinix.programs.terminal.tools.codex.enable or false;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
   copilotConfigPath = config.programs.github-copilot-cli.configDir;
@@ -64,22 +66,23 @@ in
     home.file = {
       "${copilotConfigPath}/copilot-instructions.md".source = aiTools.githubCopilotCli.base;
     }
-    // lib.mapAttrs' (name: source: {
-      name = "${copilotConfigPath}/skills/${name}";
-      value = {
-        inherit source;
-        recursive = true;
-      };
-    }) aiTools.githubCopilotCli.skills
+    //
+      lib.mapAttrs'
+        (name: _: {
+          name = "${copilotConfigPath}/skills/${name}";
+          value = {
+            source = aiTools.githubCopilotCli.skills + "/${name}";
+            recursive = true;
+          };
+        })
+        (lib.filterAttrs (_: type: type == "directory") (builtins.readDir aiTools.githubCopilotCli.skills))
     // lib.mapAttrs' (name: text: {
       name = "${copilotConfigPath}/skills/${name}/SKILL.md";
       value.text = text;
     }) aiTools.githubCopilotCli.commandSkills
-    // lib.optionalAttrs (!codexEnabled) (
-      lib.mapAttrs' (name: text: {
-        name = "${copilotConfigPath}/agents/${name}.agent.md";
-        value.text = text;
-      }) aiTools.githubCopilotCli.agents
-    );
+    // lib.mapAttrs' (name: text: {
+      name = "${copilotConfigPath}/agents/${name}.agent.md";
+      value.text = text;
+    }) aiTools.githubCopilotCli.agents;
   };
 }
