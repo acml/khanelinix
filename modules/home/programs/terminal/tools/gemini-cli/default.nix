@@ -4,10 +4,12 @@
   ...
 }:
 let
-  inherit (lib) mkEnableOption mkIf;
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    ;
 
   cfg = config.khanelinix.programs.terminal.tools.gemini-cli;
-  codexEnabled = config.khanelinix.programs.terminal.tools.codex.enable or false;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
 
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
@@ -140,9 +142,7 @@ in
         AGENTS = aiTools.base;
       };
 
-      # NOTE: `codex` deploys to `.agents/skill`
-      # Gemini picks up both and duplicates context
-      skills = lib.mkIf (!codexEnabled) aiTools.skills;
+      inherit (aiTools.geminiCli) skills;
     };
   };
 }

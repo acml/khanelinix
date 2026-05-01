@@ -15,6 +15,7 @@ let
       ];
       model = {
         claude = "opus";
+        copilot = "claude-opus-4.6";
         gemini = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.4";
       };
@@ -37,6 +38,7 @@ let
       ];
       model = {
         claude = "sonnet";
+        copilot = "claude-sonnet-4.6";
         gemini = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.4";
       };
@@ -58,6 +60,7 @@ let
       ];
       model = {
         claude = "haiku";
+        copilot = "claude-haiku-4.5";
         gemini = "gemini-3.1-flash-lite-preview";
         opencode = "github-copilot/gpt-5-mini";
       };
@@ -129,7 +132,27 @@ let
     ${lib.trim agent.content}
   '';
 
+  renderCopilotFrontmatter =
+    agent:
+    let
+      model = if builtins.isAttrs agent.model then agent.model.copilot or null else agent.model;
+    in
+    ''
+      ---
+      name: ${builtins.toJSON agent.name}
+      description: ${builtins.toJSON agent.description}
+      ${lib.optionalString (model != null) "model: ${builtins.toJSON model}"}
+      ---
+    '';
+
+  renderCopilotAgent = agent: ''
+    ${lib.trim (renderCopilotFrontmatter agent)}
+
+    ${lib.trim agent.content}
+  '';
+
   toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) agents;
+  toCopilotMarkdown = lib.mapAttrs (_name: renderCopilotAgent) agents;
   toGeminiAgents = lib.mapAttrs (_name: agent: {
     prompt = agent.content;
     description = agent.description or "AI agent";
@@ -140,8 +163,10 @@ in
   inherit
     agents
     renderClaudeAgent
+    renderCopilotAgent
     renderOpenCodeAgent
     toClaudeMarkdown
+    toCopilotMarkdown
     toGeminiAgents
     toOpenCodeMarkdown
     ;

@@ -13,8 +13,7 @@ let
     ;
 
   cfg = config.khanelinix.programs.terminal.tools.pi-coding-agent;
-  codexEnabled = config.khanelinix.programs.terminal.tools.codex.enable or false;
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
 in
 {
   options.khanelinix.programs.terminal.tools.pi-coding-agent = {
@@ -73,9 +72,7 @@ in
             };
           } cfg.settings
         );
-      }
-      // lib.optionalAttrs (!codexEnabled) {
-        ".pi/agent/skills".source = aiTools.skillsDir;
+        ".pi/agent/skills".source = aiTools.piCodingAgent.skills;
       };
     };
   };

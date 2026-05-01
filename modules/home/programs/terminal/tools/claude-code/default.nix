@@ -5,11 +5,14 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption;
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    ;
 
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
 
   claudeIcon = ./assets/claude.ico;
 in
@@ -61,7 +64,7 @@ in
       };
 
       inherit (aiTools.claudeCode) agents commands;
-      skills = aiTools.skillsDir;
+      inherit (aiTools.claudeCode) skills;
       context = aiTools.base;
     };
   };

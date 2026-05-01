@@ -112,7 +112,6 @@ in
         ++ lib.optionals cfg.aiEnable [
           # NOTE: hard to get out of neovim
           # antigravity
-          github-copilot-cli
           tuicr
         ];
 
@@ -197,6 +196,7 @@ in
             claude-code.enable = cfg.aiEnable;
             codex.enable = cfg.aiEnable;
             gemini-cli.enable = cfg.aiEnable;
+            github-copilot-cli.enable = cfg.aiEnable;
             gh = mkDefault enabled;
             git-crypt = mkDefault enabled;
             glab = mkDefault enabled;

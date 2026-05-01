@@ -5,10 +5,13 @@
   ...
 }:
 let
-  inherit (lib) mkEnableOption mkIf;
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    ;
 
   cfg = config.khanelinix.programs.terminal.tools.codex;
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
 in
 {
   options.khanelinix.programs.terminal.tools.codex = {
@@ -203,7 +206,7 @@ in
       };
 
       context = builtins.readFile aiTools.base;
-      skills = aiTools.skillsDir;
+      inherit (aiTools.codex) skills;
       rules = import ./rules.nix;
     };
   };
