@@ -84,9 +84,13 @@ the current branch.
    - `gh auth status`
 2. Run:
    - `python "<path-to-skill>/scripts/fetch_comments.py"`
-3. Summarize actionable review threads and comments.
-4. Ask the user which items to address.
-5. Implement only selected items, then report what changed.
+3. Read applicable repository guidance:
+   - root `AGENTS.md`, `CONTRIBUTING.md`, `CLAUDE.md`, and any changed-path
+     local instruction files that exist.
+4. Compare the diff, commits, and PR metadata against that guidance.
+5. Summarize actionable review threads and comments.
+6. Ask the user which items to address.
+7. Implement only selected items, then report what changed.
 
 If auth/rate limiting fails, ask the user to rerun `gh auth login` and retry.
 
@@ -99,17 +103,20 @@ matter:
 - logic that definitely produces wrong behavior
 - clear security or data-loss defects in changed code
 - clear repository-instruction violations scoped to the changed file
+- clear contribution-policy violations, including commit message standards,
+  atomicity expectations, required tests/checks, licensing, and secrets rules
 
 Do not flag style, subjective quality, pre-existing problems, speculative edge
 cases, or issues a normal linter would catch unless the repository instructions
 explicitly require it. Validate each issue against the diff and relevant local
-instructions before posting.
+instructions before posting. Treat contribution and commit standards as review
+inputs when they are documented in repository guidance.
 
 For inline comments:
 
 - post one comment per unique issue
 - include a committable suggestion only when it completely fixes the issue
-- cite local instruction files when instruction compliance is the basis
+- cite local instruction or contribution files when compliance is the basis
 - use full GitHub URLs with a concrete commit SHA when linking code
 
 If no issues are found and commenting is requested, post:
@@ -117,7 +124,7 @@ If no issues are found and commenting is requested, post:
 ```markdown
 ## Code review
 
-No issues found. Checked for bugs and AGENTS.md/CLAUDE.md compliance.
+No issues found. Checked for bugs and repository instruction/contribution compliance.
 ```
 
 ## 4) CI Fix Mode
