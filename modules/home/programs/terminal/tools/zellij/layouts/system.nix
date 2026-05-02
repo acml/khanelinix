@@ -114,7 +114,7 @@
                     _props = {
                       name = "khanelinix";
                       focus = true;
-                      cwd = "${config.home.homeDirectory}/khanelinix/";
+                      cwd = "${config.home.homeDirectory}/.config/khanelinix/";
                     };
                     _children = [
                       {
@@ -130,7 +130,7 @@
                     _props = {
                       name = "Git";
                       split_direction = "horizontal";
-                      cwd = "${config.home.homeDirectory}/khanelinix/";
+                      cwd = "${config.home.homeDirectory}/.config/khanelinix/";
                     };
                     _children = [
                       {
@@ -145,7 +145,7 @@
                   tab = {
                     _props = {
                       name = "Jujutsu";
-                      cwd = "${config.home.homeDirectory}/khanelinix/";
+                      cwd = "${config.home.homeDirectory}/.config/khanelinix/";
                     };
                     _children = [
                       {
@@ -182,7 +182,7 @@
                     _props = {
                       name = "Shell";
                       split_direction = "horizontal";
-                      cwd = "${config.home.homeDirectory}/khanelinix/";
+                      cwd = "${config.home.homeDirectory}/.config/khanelinix/";
                     };
                     _children = [
                       {

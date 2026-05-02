@@ -39,4 +39,5 @@ ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 # open commands in $EDITOR
 autoload -z edit-command-line
 zle -N edit-command-line
-bindkey "^e" edit-command-line
+# bindkey "^e" edit-command-line
+bindkey '^x^e' edit-command-line
