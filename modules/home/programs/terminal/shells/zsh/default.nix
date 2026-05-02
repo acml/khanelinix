@@ -219,11 +219,11 @@ in
             file = "share/zsh-nix-shell/nix-shell.plugin.zsh";
             src = pkgs.zsh-nix-shell;
           }
-          {
-            name = "zsh-vi-mode";
-            src = pkgs.zsh-vi-mode;
-            file = "share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
-          }
+          # {
+          #   name = "zsh-vi-mode";
+          #   src = pkgs.zsh-vi-mode;
+          #   file = "share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
+          # }
           {
             name = "zsh-autosuggestions";
             file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";

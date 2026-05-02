@@ -73,9 +73,9 @@ in
         logLevel = "debug";
       };
 
-      # flags = [
-      #   "--disable-up-arrow"
-      # ];
+      flags = [
+        "--disable-up-arrow"
+      ];
 
       # Atuin configuration
       # See: https://docs.atuin.sh/configuration/config/
