@@ -423,19 +423,19 @@ in
       launch zellij -l system
 
       new_tab khanelivim
-      cd ${config.home.homeDirectory}/github/khanelivim
+      cd ${config.home.homeDirectory}/Projects/github/khanelivim
       launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
 
       new_tab nixvim
-      cd ${config.home.homeDirectory}/github/nixvim
+      cd ${config.home.homeDirectory}/Projects/github/nixvim
       launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
 
       new_tab home-manager
-      cd ${config.home.homeDirectory}/github/home-manager
+      cd ${config.home.homeDirectory}/Projects/github/home-manager
       launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
 
       new_tab nixpkgs
-      cd ${config.home.homeDirectory}/github/nixpkgs
+      cd ${config.home.homeDirectory}/Projects/github/nixpkgs
       launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
     '';
   };

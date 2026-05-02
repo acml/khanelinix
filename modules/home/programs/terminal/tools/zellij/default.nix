@@ -62,7 +62,7 @@ in
 
         auto_layouts = true;
 
-        default_layout = "dev";
+        default_layout = "system"; # "dev";
         default_mode = "locked";
         support_kitty_keyboard_protocol = true;
 
