@@ -293,7 +293,7 @@ in
         tools = {
           # No need for all these on his computer
           carapace.enable = false;
-          jujutsu.enable = false;
+          # jujutsu.enable = true;
           topgrade.enable = false;
 
           git.enable = true;
