@@ -2,9 +2,9 @@
 
 ## Colocated repos
 
-When `.git/` is sibling of `.jj/`, the repo is "colocated". Git and jj share
-the same commits. Imports/exports happen automatically. You can use `git log`
-to see the same history, but always use `jj` commands to make changes.
+When `.git/` is sibling of `.jj/`, the repo is "colocated". Git and jj share the
+same commits. Imports/exports happen automatically. You can use `git log` to see
+the same history, but always use `jj` commands to make changes.
 
 ## Bookmarks
 

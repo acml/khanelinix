@@ -21,4 +21,5 @@ That file includes:
 - revset and workspace reference tables
 
 Keep MIT license attribution in-tree with:
+
 - [references/LICENSE-jj-hunk-tool](references/LICENSE-jj-hunk-tool)

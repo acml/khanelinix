@@ -13,24 +13,25 @@ When invoked, choose one mode:
 
 1. **issue-creation** — convert messy inputs into a structured GitHub issue
    markdown file.
-2. **issue-triage** — find, filter, and summarize GitHub issues for selection
-   or contribution.
-3. **pr-review** — collect, prioritize, and address review comments on the PR for
-   the current branch.
+2. **issue-triage** — find, filter, and summarize GitHub issues for selection or
+   contribution.
+3. **pr-review** — collect, prioritize, and address review comments on the PR
+   for the current branch.
 4. **ci-fix** — inspect failing PR checks and summarize actionable fix context.
 
 If intent is unclear, ask for the mode before acting.
 
 ## 1) Issue Creation Mode
 
-Use when the user provides raw notes, logs, dictation, or screenshots and wants a
-ready-to-file GitHub issue.
+Use when the user provides raw notes, logs, dictation, or screenshots and wants
+a ready-to-file GitHub issue.
 
 - Follow the issue template below.
 - Keep every section concise and action-oriented.
-- Save output to `/issues/` as `YYYY-MM-DD-short-description.md` unless the
-  user requests another destination.
-- Match acceptance criteria in [acceptance-criteria.md](references/acceptance-criteria.md).
+- Save output to `/issues/` as `YYYY-MM-DD-short-description.md` unless the user
+  requests another destination.
+- Match acceptance criteria in
+  [acceptance-criteria.md](references/acceptance-criteria.md).
 
 ### Issue Template
 
@@ -56,9 +57,11 @@ ready-to-file GitHub issue.
 `[error text / logs if present]`
 
 ## Visual Evidence
+
 [attachment references]
 
 ## Impact
+
 [Critical/High/Medium/Low + short rationale]
 
 ## Additional Context
@@ -124,7 +127,8 @@ If no issues are found and commenting is requested, post:
 ```markdown
 ## Code review
 
-No issues found. Checked for bugs and repository instruction/contribution compliance.
+No issues found. Checked for bugs and repository instruction/contribution
+compliance.
 ```
 
 ## 4) CI Fix Mode
@@ -155,5 +159,5 @@ If `gh pr checks` field shape changes, rerun with reported accepted fields.
 - Prefer minimal, safe edits first.
 - Ask for explicit approval before touching files from issue summaries or CI
   recommendations.
-- For destructive git operations (hard reset, force push, branch deletion), call out
-  risk before running them.
+- For destructive git operations (hard reset, force push, branch deletion), call
+  out risk before running them.

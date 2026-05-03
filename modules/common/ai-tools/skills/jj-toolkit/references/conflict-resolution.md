@@ -9,6 +9,7 @@ log it, diff it, and even rebase it further. But the working copy will contain
 conflict markers and the code won't compile until resolved.
 
 Common triggers:
+
 - `jj edit <rev>` then modifying code → descendants that touched the same code
   get conflicts on rebase
 - `jj squash --from A --into B` where descendants of B overlap with A's changes
@@ -26,6 +27,7 @@ jj resolve --list -r <rev>          # list conflicted files in specific revision
 ```
 
 When you `jj edit` a conflicted commit, the warning is printed immediately:
+
 ```
 Warning: There are unresolved conflicts at these paths:
 src/main.rs    2-sided conflict
@@ -115,6 +117,7 @@ Use when one side is clearly correct and the other should be discarded.
 ### Strategy 3: Re-apply your changes
 
 If the conflict is from your own edits to an ancestor:
+
 1. Note what you changed (the diff in the `%%%%%%%` section)
 2. Take the `+++++++` side (the descendant's content)
 3. Re-apply your changes on top of it
@@ -163,5 +166,5 @@ untangle.
   all are resolved, the commit drops its "(conflict)" marker automatically.
 
 - **If resolution goes wrong**, `jj undo` reverts your last operation.
-  Alternatively, the conflict markers are still valid data — you can re-read
-  and try again.
+  Alternatively, the conflict markers are still valid data — you can re-read and
+  try again.

@@ -57,16 +57,16 @@ provides guidelines for contributing to this Nix-based dotfiles configuration.
      signaling that the patch should be reviewed or removed.
 
 10. **External Code and Licensing**:
-   - Any code, configuration, documentation, script, asset, or other file
-     copied from an external/public repository must respect the upstream license.
-   - Include the upstream license file in-tree alongside the copied content
-     (typically `LICENSE`, `LICENSE.txt`, `COPYING`, `NOTICE`, etc.), unless
-     the original license is explicitly incompatible with this repository's
-     usage.
-   - If the upstream project requires attribution or additional notices, include
-     those notices as provided by the source alongside the copied files.
-   - Do not move or rename the original licensing files unless there is a clear
-     compatibility reason, and keep their contents unchanged.
+
+- Any code, configuration, documentation, script, asset, or other file copied
+  from an external/public repository must respect the upstream license.
+- Include the upstream license file in-tree alongside the copied content
+  (typically `LICENSE`, `LICENSE.txt`, `COPYING`, `NOTICE`, etc.), unless the
+  original license is explicitly incompatible with this repository's usage.
+- If the upstream project requires attribution or additional notices, include
+  those notices as provided by the source alongside the copied files.
+- Do not move or rename the original licensing files unless there is a clear
+  compatibility reason, and keep their contents unchanged.
 
 ### Module Organization
 

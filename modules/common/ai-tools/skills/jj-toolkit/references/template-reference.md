@@ -1,29 +1,29 @@
 # Template Language Reference
 
-Templates customize output of `jj log`, `jj show`, `jj op log`, etc.
-Use with `-T <template>`.
+Templates customize output of `jj log`, `jj show`, `jj op log`, etc. Use with
+`-T <template>`.
 
 ## Commit keywords
 
-| Keyword | Type | Description |
-|---|---|---|
-| `description` | String | Full commit description |
-| `change_id` | ChangeId | Stable change identifier |
-| `commit_id` | CommitId | Content-addressed hash |
-| `author` | Signature | Author name/email/timestamp |
-| `committer` | Signature | Committer name/email/timestamp |
-| `bookmarks` | List<Ref> | All bookmarks pointing here |
-| `local_bookmarks` | List<Ref> | Local bookmarks |
-| `remote_bookmarks` | List<Ref> | Remote bookmarks |
-| `tags` | List<Ref> | Tags |
-| `working_copies` | String | Workspace names with this as @ |
-| `current_working_copy` | Bool | Is this @ in current workspace? |
-| `conflict` | Bool | Has conflicts? |
-| `empty` | Bool | No diff vs parent? |
-| `immutable` | Bool | Is immutable? |
-| `parents` | List<Commit> | Parent commits |
-| `diff([files])` | TreeDiff | Changes in this commit |
-| `mine` | Bool | Author matches configured user? |
+| Keyword                | Type         | Description                     |
+| ---------------------- | ------------ | ------------------------------- |
+| `description`          | String       | Full commit description         |
+| `change_id`            | ChangeId     | Stable change identifier        |
+| `commit_id`            | CommitId     | Content-addressed hash          |
+| `author`               | Signature    | Author name/email/timestamp     |
+| `committer`            | Signature    | Committer name/email/timestamp  |
+| `bookmarks`            | List<Ref>    | All bookmarks pointing here     |
+| `local_bookmarks`      | List<Ref>    | Local bookmarks                 |
+| `remote_bookmarks`     | List<Ref>    | Remote bookmarks                |
+| `tags`                 | List<Ref>    | Tags                            |
+| `working_copies`       | String       | Workspace names with this as @  |
+| `current_working_copy` | Bool         | Is this @ in current workspace? |
+| `conflict`             | Bool         | Has conflicts?                  |
+| `empty`                | Bool         | No diff vs parent?              |
+| `immutable`            | Bool         | Is immutable?                   |
+| `parents`              | List<Commit> | Parent commits                  |
+| `diff([files])`        | TreeDiff     | Changes in this commit          |
+| `mine`                 | Bool         | Author matches configured user? |
 
 ## Common methods
 
