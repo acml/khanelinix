@@ -25,12 +25,13 @@ If intent is unclear, ask which mode to run.
 ## 1) Best-Practices Mode
 
 Use for secure-by-default reviews and security code guidance. Only trigger for
-explicit requests for security best-practice review, security guidance, or secure-by-default coding help.
+explicit requests for security best-practice review, security guidance, or
+secure-by-default coding help.
 
 Workflow:
 
-1. Identify languages and frameworks in the target codebase (frontend and backend
-   if both exist).
+1. Identify languages and frameworks in the target codebase (frontend and
+   backend if both exist).
 2. Load relevant files in `references/` matching the stack:
    - `javascript-general-web-frontend-security.md`
    - `javascript-<framework>-<stack>-security.md`
@@ -53,13 +54,13 @@ Use for explicit AppSec or threat-modeling requests.
 
 Use this workflow:
 
-1. Establish scope: repo path, deployment model, auth expectations, trust boundary
-   inputs.
-2. Load and follow the output contract in
-   `references/prompt-template.md`.
+1. Establish scope: repo path, deployment model, auth expectations, trust
+   boundary inputs.
+2. Load and follow the output contract in `references/prompt-template.md`.
 3. Identify components, trust boundaries, assets, entry points, and abuse paths.
 4. Prioritize by realistic likelihood × impact and capture assumptions.
-5. Separate existing controls from missing controls, then emit concrete mitigations.
+5. Separate existing controls from missing controls, then emit concrete
+   mitigations.
 6. Validate runtime vs CI/dev/tooling separation before finalizing.
 7. Write output to `<repo-or-dir-name>-threat-model.md`.
 
@@ -70,7 +71,8 @@ Reference files:
 
 ## 3) Ownership Map Mode
 
-Use for security ownership analysis, sensitive-code stewardship, and bus-factor risks.
+Use for security ownership analysis, sensitive-code stewardship, and bus-factor
+risks.
 
 Requirements:
 
@@ -80,7 +82,8 @@ Requirements:
 Workflow:
 
 1. Scope repo and time window.
-2. Run `scripts/run_ownership_map.py` to build ownership + optional co-change graph.
+2. Run `scripts/run_ownership_map.py` to build ownership + optional co-change
+   graph.
 3. Use `scripts/query_ownership.py` for bounded slices instead of loading full
    output.
 4. Call out security findings from `summary.json` sections:

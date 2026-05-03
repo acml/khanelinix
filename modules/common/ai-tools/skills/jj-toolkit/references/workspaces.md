@@ -44,6 +44,7 @@ commit preserving the working directory contents.
 ## Operation log sharing
 
 Each operation records the complete repo state including:
+
 - All bookmark positions
 - All Git refs and repo heads
 - The working-copy commit **for every workspace**
@@ -80,6 +81,6 @@ Plan accordingly if you need git compatibility in all workspaces.
   changes while sharing the same commit graph.
 - **Cross-commit comparison.** Check out different revisions in different
   workspaces and use standard filesystem tools (diff, IDE) to compare.
-- **Isolated experiments.** Try risky refactors in a disposable workspace. If
-  it works, the commits are already in the main repo. If not, forget the
-  workspace and abandon the commits.
+- **Isolated experiments.** Try risky refactors in a disposable workspace. If it
+  works, the commits are already in the main repo. If not, forget the workspace
+  and abandon the commits.

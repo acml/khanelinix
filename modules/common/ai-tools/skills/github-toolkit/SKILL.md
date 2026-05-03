@@ -13,24 +13,25 @@ When invoked, choose one mode:
 
 1. **issue-creation** — convert messy inputs into a structured GitHub issue
    markdown file.
-2. **issue-triage** — find, filter, and summarize GitHub issues for selection
-   or contribution.
-3. **pr-review** — collect, prioritize, and address review comments on the PR for
-   the current branch.
+2. **issue-triage** — find, filter, and summarize GitHub issues for selection or
+   contribution.
+3. **pr-review** — collect, prioritize, and address review comments on the PR
+   for the current branch.
 4. **ci-fix** — inspect failing PR checks and summarize actionable fix context.
 
 If intent is unclear, ask for the mode before acting.
 
 ## 1) Issue Creation Mode
 
-Use when the user provides raw notes, logs, dictation, or screenshots and wants a
-ready-to-file GitHub issue.
+Use when the user provides raw notes, logs, dictation, or screenshots and wants
+a ready-to-file GitHub issue.
 
 - Follow the issue template below.
 - Keep every section concise and action-oriented.
-- Save output to `/issues/` as `YYYY-MM-DD-short-description.md` unless the
-  user requests another destination.
-- Match acceptance criteria in [acceptance-criteria.md](references/acceptance-criteria.md).
+- Save output to `/issues/` as `YYYY-MM-DD-short-description.md` unless the user
+  requests another destination.
+- Match acceptance criteria in
+  [acceptance-criteria.md](references/acceptance-criteria.md).
 
 ### Issue Template
 
@@ -56,9 +57,11 @@ ready-to-file GitHub issue.
 `[error text / logs if present]`
 
 ## Visual Evidence
+
 [attachment references]
 
 ## Impact
+
 [Critical/High/Medium/Low + short rationale]
 
 ## Additional Context
@@ -84,9 +87,13 @@ the current branch.
    - `gh auth status`
 2. Run:
    - `python "<path-to-skill>/scripts/fetch_comments.py"`
-3. Summarize actionable review threads and comments.
-4. Ask the user which items to address.
-5. Implement only selected items, then report what changed.
+3. Read applicable repository guidance:
+   - root `AGENTS.md`, `CONTRIBUTING.md`, `CLAUDE.md`, and any changed-path
+     local instruction files that exist.
+4. Compare the diff, commits, and PR metadata against that guidance.
+5. Summarize actionable review threads and comments.
+6. Ask the user which items to address.
+7. Implement only selected items, then report what changed.
 
 If auth/rate limiting fails, ask the user to rerun `gh auth login` and retry.
 
@@ -99,17 +106,20 @@ matter:
 - logic that definitely produces wrong behavior
 - clear security or data-loss defects in changed code
 - clear repository-instruction violations scoped to the changed file
+- clear contribution-policy violations, including commit message standards,
+  atomicity expectations, required tests/checks, licensing, and secrets rules
 
 Do not flag style, subjective quality, pre-existing problems, speculative edge
 cases, or issues a normal linter would catch unless the repository instructions
 explicitly require it. Validate each issue against the diff and relevant local
-instructions before posting.
+instructions before posting. Treat contribution and commit standards as review
+inputs when they are documented in repository guidance.
 
 For inline comments:
 
 - post one comment per unique issue
 - include a committable suggestion only when it completely fixes the issue
-- cite local instruction files when instruction compliance is the basis
+- cite local instruction or contribution files when compliance is the basis
 - use full GitHub URLs with a concrete commit SHA when linking code
 
 If no issues are found and commenting is requested, post:
@@ -117,7 +127,8 @@ If no issues are found and commenting is requested, post:
 ```markdown
 ## Code review
 
-No issues found. Checked for bugs and AGENTS.md/CLAUDE.md compliance.
+No issues found. Checked for bugs and repository instruction/contribution
+compliance.
 ```
 
 ## 4) CI Fix Mode
@@ -148,5 +159,5 @@ If `gh pr checks` field shape changes, rerun with reported accepted fields.
 - Prefer minimal, safe edits first.
 - Ask for explicit approval before touching files from issue summaries or CI
   recommendations.
-- For destructive git operations (hard reset, force push, branch deletion), call out
-  risk before running them.
+- For destructive git operations (hard reset, force push, branch deletion), call
+  out risk before running them.
