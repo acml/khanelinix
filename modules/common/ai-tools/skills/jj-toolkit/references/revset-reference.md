@@ -5,7 +5,8 @@
 1. `f(x)` -- function call
 2. `x-` (parents), `x+` (children)
 3. `p:x` -- string/date pattern
-4. `x::` (descendants), `::x` (ancestors), `x::y` (DAG range), `x..y` (set diff), `x..`, `..x`, `::`, `..`
+4. `x::` (descendants), `::x` (ancestors), `x::y` (DAG range), `x..y` (set
+   diff), `x..`, `..x`, `::`, `..`
 5. `~x` -- complement
 6. `x & y` -- intersection, `x ~ y` -- difference
 7. `x | y` -- union
@@ -16,6 +17,7 @@ Set diff `x..y` = ancestors of y minus ancestors of x (like Git's `x..y`).
 ## All functions
 
 ### Commit selection
+
 - `parents(x, [depth])`, `children(x, [depth])`
 - `ancestors(x, [depth])`, `descendants(x, [depth])`
 - `heads(x)`, `roots(x)`, `connected(x)` (= `x::x`)
@@ -28,11 +30,14 @@ Set diff `x..y` = ancestors of y minus ancestors of x (like Git's `x..y`).
 - `present(x)` -- returns none() if x doesn't exist (avoids errors)
 
 ### Named refs
+
 - `bookmarks([pattern])`, `remote_bookmarks([name], [remote=])`
 - `tags([pattern])`, `trunk()`
-- `tracked_remote_bookmarks([name], [remote=])`, `untracked_remote_bookmarks([name], [remote=])`
+- `tracked_remote_bookmarks([name], [remote=])`,
+  `untracked_remote_bookmarks([name], [remote=])`
 
 ### Commit properties
+
 - `description(pattern)`, `subject(pattern)`
 - `author(pattern)`, `committer(pattern)`
 - `author_date(pattern)`, `committer_date(pattern)`
@@ -41,6 +46,7 @@ Set diff `x..y` = ancestors of y minus ancestors of x (like Git's `x..y`).
 - `files(expression)`, `diff_lines(text, [files])`
 
 ### Sets
+
 - `all()`, `none()`, `visible_heads()`, `root()`
 - `mutable()`, `immutable()`, `immutable_heads()`
 

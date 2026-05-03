@@ -20,8 +20,8 @@ easy to verify.
   the confusion, explain the tradeoff, and ask for resolution.
 - Push back when an approach has concrete downsides. Explain the risk, propose a
   simpler alternative, then accept the human's decision.
-- Prefer boring, direct solutions. Add abstractions only when they clearly reduce
-  real complexity.
+- Prefer boring, direct solutions. Add abstractions only when they clearly
+  reduce real complexity.
 - Keep scope tight. Do not clean up adjacent code, remove comments, refactor
   neighbors, or delete code you do not understand.
 - After refactors, identify newly unused code and ask before deleting it.

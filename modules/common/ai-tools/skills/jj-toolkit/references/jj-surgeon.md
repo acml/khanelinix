@@ -12,18 +12,19 @@ snapshotted into commit `@` at the start of every jj command. There is no
 staging area. All file changes are immediately part of `@`.
 
 **"Clean" means an empty `@`.** When `@` has no diff vs its parent, the working
-copy is clean. You do NOT need to `jj abandon` an empty `@` — it is harmless
-and jj creates a new empty `@` automatically after operations that consume it.
-**Always finish your work with a clean `@`.** Use `jj commit -m "message"`
-(not `jj describe`) when you're done with a change — `jj commit` finalizes `@`
-and creates a new empty working copy on top. If you use `jj describe` instead,
-`@` still contains your changes and you're still "editing" it. This is the jj
+copy is clean. You do NOT need to `jj abandon` an empty `@` — it is harmless and
+jj creates a new empty `@` automatically after operations that consume it.
+**Always finish your work with a clean `@`.** Use `jj commit -m "message"` (not
+`jj describe`) when you're done with a change — `jj commit` finalizes `@` and
+creates a new empty working copy on top. If you use `jj describe` instead, `@`
+still contains your changes and you're still "editing" it. This is the jj
 equivalent of leaving a dirty working copy in Git.
 
 **Change IDs vs commit IDs.** Every commit has two identifiers:
-- *Change ID* — stable across rewrites (rebase, amend, squash). Shown as
+
+- _Change ID_ — stable across rewrites (rebase, amend, squash). Shown as
   reversed-hex letters (k-z). Use this to refer to changes you plan to rewrite.
-- *Commit ID* — content hash (standard hex). Changes on every rewrite. Matches
+- _Commit ID_ — content hash (standard hex). Changes on every rewrite. Matches
   the Git SHA in colocated repos. Becomes permanent once immutable.
 
 **No branches, only bookmarks.** Bookmarks are named pointers to commits. They
@@ -33,10 +34,9 @@ follow when a commit is rewritten. See
 
 **Editing history is safe — but watch for conflicts.** jj rewrites commits
 freely and automatically rebases descendants. If a rebase causes overlapping
-changes, jj records a conflict in the descendant commit and warns you.
-Conflicts are data (not blocking states) but must be resolved before the code
-compiles. See
-[references/conflict-resolution.md](references/conflict-resolution.md).
+changes, jj records a conflict in the descendant commit and warns you. Conflicts
+are data (not blocking states) but must be resolved before the code compiles.
+See [references/conflict-resolution.md](references/conflict-resolution.md).
 
 **Operation log.** Every command creates an operation entry. `jj undo` reverts
 the last operation. `jj op restore <id>` jumps to any past state.
@@ -101,9 +101,9 @@ jj describe <rev> -m "message"          # describe a specific revision
 jj edit <rev>                           # set <rev> as @ (edit a historical change)
 ```
 
-After `jj edit <rev>`, any file changes you make modify `<rev>` directly and
-all descendants are rebased. Check `jj log -r 'conflicts()'` afterward. When
-done, use `jj new` to stop editing and create a fresh empty `@`.
+After `jj edit <rev>`, any file changes you make modify `<rev>` directly and all
+descendants are rebased. Check `jj log -r 'conflicts()'` afterward. When done,
+use `jj new` to stop editing and create a fresh empty `@`.
 
 ## Viewing changes
 
@@ -134,8 +134,8 @@ opens `$EDITOR` for each resulting commit.
 diff editor. Use `jj split path/to/file` for file-level splits or
 `jj-hunk-tool split` for hunk-level splits.
 
-Splitting rewrites the target revision, so all descendants are rebased. jj
-will warn if this creates conflicts — resolve them before continuing. See
+Splitting rewrites the target revision, so all descendants are rebased. jj will
+warn if this creates conflicts — resolve them before continuing. See
 [references/conflict-resolution.md](references/conflict-resolution.md).
 
 ## Squashing and absorbing
@@ -151,14 +151,14 @@ jj-hunk-tool squash <id> --from <rev> --into <rev> -m "msg"
 **Always pass `-m` to `jj squash`.** Without `-m`, jj opens `$EDITOR`.
 
 **Warning:** `jj squash` rewrites the destination commit, causing all its
-descendants to be rebased. jj will warn if this creates conflicts — resolve
-them before continuing. See
+descendants to be rebased. jj will warn if this creates conflicts — resolve them
+before continuing. See
 [references/conflict-resolution.md](references/conflict-resolution.md).
 
 ### Absorbing
 
-`jj absorb` auto-distributes changes from `@` into the correct mutable
-ancestors by blame — extremely powerful for fixup workflows.
+`jj absorb` auto-distributes changes from `@` into the correct mutable ancestors
+by blame — extremely powerful for fixup workflows.
 
 ```bash
 jj absorb                               # auto-distribute @ into ancestors
@@ -170,11 +170,11 @@ jj-hunk-tool absorb --dry-run           # preview routing plan
 
 Always review with `jj op show -p --no-pager` afterward.
 
-`jj-hunk-tool absorb` differs from `jj absorb`: it treats each hunk as an
-atomic unit and routes based on deleted/modified line blame. Pure insertions
-fall back to the most recent mutable ancestor that touched the same file. New
-files stay in `@`. Ambiguous hunks (lines from multiple ancestors) stay in `@`
-with candidates printed.
+`jj-hunk-tool absorb` differs from `jj absorb`: it treats each hunk as an atomic
+unit and routes based on deleted/modified line blame. Pure insertions fall back
+to the most recent mutable ancestor that touched the same file. New files stay
+in `@`. Ambiguous hunks (lines from multiple ancestors) stay in `@` with
+candidates printed.
 
 ## Editing diffs in place
 
@@ -207,8 +207,8 @@ jj rebase -r <rev> -B <before>          # insert before
 jj rebase -s @ -d main                  # rebase current stack onto main
 ```
 
-Rebasing can create conflicts if the new base has diverged. jj will warn if
-this happens — resolve them before continuing. See
+Rebasing can create conflicts if the new base has diverged. jj will warn if this
+happens — resolve them before continuing. See
 [references/conflict-resolution.md](references/conflict-resolution.md).
 
 ## Undoing operations
@@ -242,30 +242,30 @@ Revsets select sets of commits. Used with `-r` on most commands.
 
 ### Symbols
 
-| Symbol | Meaning |
-|---|---|
-| `@` | Working copy commit |
-| `@-` | Parent of `@` (shorthand for `@-1`) |
-| `@--` | Grandparent of `@` |
-| `root()` | Root commit |
-| `trunk()` | Head of default remote's default branch |
-| `<change_id>` | Commit by change ID (or unique prefix) |
-| `<bookmark>` | Commit at bookmark |
+| Symbol        | Meaning                                 |
+| ------------- | --------------------------------------- |
+| `@`           | Working copy commit                     |
+| `@-`          | Parent of `@` (shorthand for `@-1`)     |
+| `@--`         | Grandparent of `@`                      |
+| `root()`      | Root commit                             |
+| `trunk()`     | Head of default remote's default branch |
+| `<change_id>` | Commit by change ID (or unique prefix)  |
+| `<bookmark>`  | Commit at bookmark                      |
 
 ### Operators
 
-| Syntax | Meaning |
-|---|---|
-| `x-` | Parents of x |
-| `x+` | Children of x |
-| `::x` | Ancestors of x (inclusive) |
-| `x::` | Descendants of x (inclusive) |
-| `x::y` | DAG range: ancestors of y that are descendants of x |
-| `x..y` | Set difference: ancestors of y minus ancestors of x |
-| `~x` | Complement |
-| `x & y` | Intersection |
-| `x \| y` | Union |
-| `x ~ y` | Difference (x minus y) |
+| Syntax   | Meaning                                             |
+| -------- | --------------------------------------------------- |
+| `x-`     | Parents of x                                        |
+| `x+`     | Children of x                                       |
+| `::x`    | Ancestors of x (inclusive)                          |
+| `x::`    | Descendants of x (inclusive)                        |
+| `x::y`   | DAG range: ancestors of y that are descendants of x |
+| `x..y`   | Set difference: ancestors of y minus ancestors of x |
+| `~x`     | Complement                                          |
+| `x & y`  | Intersection                                        |
+| `x \| y` | Union                                               |
+| `x ~ y`  | Difference (x minus y)                              |
 
 ### Common patterns
 
@@ -355,23 +355,29 @@ jj op restore <op-id>                   # restore to any point
 - **Always pass `-m "message"` to `jj commit`, `jj describe`, `jj squash`,
   `jj split`, and any other command that sets a commit message** — unless the
   user explicitly asks to write the message in their editor.
-- `jj diff` with no `-r` shows `@` vs parent. Use `-r <rev>` for other revisions.
+- `jj diff` with no `-r` shows `@` vs parent. Use `-r <rev>` for other
+  revisions.
 - After `jj commit -m "msg"`, the described change is `@-` (the parent). `@` is
   the new empty working copy.
-- Immutable commits (on trunk, tags, remote bookmarks) cannot be rewritten.
-  Use `mutable()` revset to find what you can edit.
+- Immutable commits (on trunk, tags, remote bookmarks) cannot be rewritten. Use
+  `mutable()` revset to find what you can edit.
 - `jj squash` without args squashes `@` into `@-`. With `--from`/`--into` you
   can squash between any two mutable commits.
 - After any history rewrite, jj will warn if conflicts were created. Resolve
   them immediately — cascading conflicts are much harder to fix. See
-  [references/conflict-resolution.md](references/conflict-resolution.md).
-  Use `jj log -r 'conflicts()'` if you need to find all conflicted commits.
+  [references/conflict-resolution.md](references/conflict-resolution.md). Use
+  `jj log -r 'conflicts()'` if you need to find all conflicted commits.
 
 ## Reference docs
 
-- [Revsets](references/revset-reference.md) — full function list, string/date patterns
-- [Conflict resolution](references/conflict-resolution.md) — marker format, reading guide, strategies
-- [Git interop](references/git-interop.md) — bookmarks, pushing, remotes, colocated repos
-- [Workspaces](references/workspaces.md) — multiple working copies, sparse checkouts
+- [Revsets](references/revset-reference.md) — full function list, string/date
+  patterns
+- [Conflict resolution](references/conflict-resolution.md) — marker format,
+  reading guide, strategies
+- [Git interop](references/git-interop.md) — bookmarks, pushing, remotes,
+  colocated repos
+- [Workspaces](references/workspaces.md) — multiple working copies, sparse
+  checkouts
 - [Templates](references/template-reference.md) — custom log/show output
-- [Bisect](references/bisect.md) — binary search for regressions with `jj bisect run`
+- [Bisect](references/bisect.md) — binary search for regressions with
+  `jj bisect run`

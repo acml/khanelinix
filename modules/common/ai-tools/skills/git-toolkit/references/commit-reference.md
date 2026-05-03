@@ -88,8 +88,8 @@ Use this when asked to group or create commits from an existing worktree.
 - Before committing, compare `git diff --cached` against the intended commit
   contents.
 
-For breaking regressions introduced in recent commits, use `fixup` + `autosquash`
-instead of tiny follow-up commits:
+For breaking regressions introduced in recent commits, use `fixup` +
+`autosquash` instead of tiny follow-up commits:
 
 - Commit the correction with `git commit --fixup=<bad-commit-sha>`.
 - Then run `git rebase -i --autosquash <parent-of-bad-commit>` and reorder if
