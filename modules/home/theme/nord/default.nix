@@ -16,6 +16,25 @@ let
 
   cfg = config.khanelinix.theme.nord;
   palette = import ./colors.nix;
+  thunderbirdAddon = pkgs.stdenvNoCC.mkDerivation {
+    pname = "thunderbird-addon-nord-theme";
+    version = "1.0";
+
+    src = pkgs.fetchurl {
+      url = "https://addons.thunderbird.net/thunderbird/downloads/file/1019997/nord_theme-1.0-tb.xpi";
+      sha256 = "sha256-3cL4HFekqpwQbPK9uBM3NZxw1hDxnB1uTIAVjbdi2K4=";
+    };
+
+    dontUnpack = true;
+
+    installPhase = ''
+      runHook preInstall
+
+      install -D "$src" "$out/share/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/nord.theme@example.com.xpi"
+
+      runHook postInstall
+    '';
+  };
   stylixAvailable = options ? stylix;
 in
 {
@@ -84,6 +103,9 @@ in
             };
           };
         };
+        programs.firefox.profiles.${config.khanelinix.user.name}.extensions.packages =
+          mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
+            [ pkgs.firefox-addons.kristofferhagen-nord-theme ];
 
         khanelinix.programs.graphical.apps.thunderbird.theme = {
           enable = true;
@@ -99,6 +121,13 @@ in
             border = palette.palette.nord3.hex;
           };
         };
+
+        programs.thunderbird.profiles.${config.khanelinix.user.name} =
+          mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
+            {
+              extensions = [ thunderbirdAddon ];
+              settings."extensions.autoDisableScopes" = 0;
+            };
 
         home = {
           pointerCursor = mkIf pkgs.stdenv.hostPlatform.isLinux {
