@@ -76,6 +76,7 @@ in
       "class<DBeaver>" = "";
       "class<Element>" = "󰭹";
       "class<Darktable>" = "󰄄";
+      "class<Emacs>" = "";
       "class<Github Desktop>" = "󰊤";
       "class<Godot>" = "";
       "class<Mysql-workbench-bin>" = "";
