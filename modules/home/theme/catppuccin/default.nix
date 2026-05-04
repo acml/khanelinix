@@ -22,6 +22,25 @@ let
 
   cfg = config.khanelinix.theme.catppuccin;
   inherit (pkgs.stdenv.hostPlatform) isLinux;
+  thunderbirdAddon = pkgs.stdenvNoCC.mkDerivation {
+    pname = "thunderbird-addon-catppuccin-macchiatio-unofficial";
+    version = "1.1";
+
+    src = pkgs.fetchurl {
+      url = "https://addons.thunderbird.net/thunderbird/downloads/file/1040515/catppuccin_macchiatio_unofficial-1.1-tb.xpi";
+      sha256 = "sha256-F/TjydQ39QZw+g2KYN0EGpf0SDgZF+m9hxcJHOHqmsQ=";
+    };
+
+    dontUnpack = true;
+
+    installPhase = ''
+      runHook preInstall
+
+      install -D "$src" "$out/share/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/macchitiounofficial@addons.thunderbird.net.xpi"
+
+      runHook postInstall
+    '';
+  };
 in
 {
   imports = [
@@ -115,6 +134,16 @@ in
             border = palette.colors.overlay0.hex;
           };
         };
+        programs.firefox.profiles.${config.khanelinix.user.name}.extensions.packages =
+          mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
+            [ pkgs.firefox-addons.catppuccin-mocha-mauve ];
+
+        programs.thunderbird.profiles.${config.khanelinix.user.name} =
+          mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
+            {
+              extensions = [ thunderbirdAddon ];
+              settings."extensions.autoDisableScopes" = 0;
+            };
       }
       (lib.optionalAttrs (inputs ? catppuccin && inputs.catppuccin ? homeModules) {
         catppuccin = {

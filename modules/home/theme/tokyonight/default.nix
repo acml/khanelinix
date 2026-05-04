@@ -16,6 +16,25 @@ let
 
   cfg = config.khanelinix.theme.tokyonight;
   palette = import ./colors.nix;
+  thunderbirdAddon = pkgs.stdenvNoCC.mkDerivation {
+    pname = "thunderbird-addon-tokyo-night";
+    version = "1.0.1";
+
+    src = pkgs.fetchurl {
+      url = "https://addons.thunderbird.net/thunderbird/downloads/file/1020993/tokyo_night-1.0.1-tb.xpi";
+      sha256 = "sha256-Vi5Talz3rWjoKmgORNvUg3S+GCpq07IalCIZN1CmsSc=";
+    };
+
+    dontUnpack = true;
+
+    installPhase = ''
+      runHook preInstall
+
+      install -D "$src" "$out/share/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/{a1377b45-90f3-4570-a869-21554f7ddc9c}.xpi"
+
+      runHook postInstall
+    '';
+  };
 
   stylixAvailable = options ? stylix;
 in
@@ -97,6 +116,9 @@ in
             };
           };
         };
+        programs.firefox.profiles.${config.khanelinix.user.name}.extensions.packages =
+          mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
+            [ pkgs.firefox-addons.tokyo-night-v2 ];
 
         khanelinix.programs.graphical.apps.thunderbird.theme =
           let
@@ -118,6 +140,13 @@ in
               border = colors.blue7;
             };
           };
+
+        programs.thunderbird.profiles.${config.khanelinix.user.name} =
+          mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
+            {
+              extensions = [ thunderbirdAddon ];
+              settings."extensions.autoDisableScopes" = 0;
+            };
 
         home = {
           pointerCursor = mkIf pkgs.stdenv.hostPlatform.isLinux {
