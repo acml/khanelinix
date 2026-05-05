@@ -180,10 +180,17 @@
       igpuPath = pciPath (if pCfg.intelBusId != "" then pCfg.intelBusId else pCfg.amdgpuBusId);
       dgpuPath = pciPath pCfg.nvidiaBusId;
     in
-    (lib.singleton (
-      pkgs.writeTextDir "lib/udev/rules.d/61-gpu-offload.rules" ''
+    [
+      (pkgs.writeTextDir "lib/udev/rules.d/61-gpu-offload.rules" ''
         SYMLINK=="${igpuPath}", SYMLINK+="dri/igpu1"
         SYMLINK=="${dgpuPath}", SYMLINK+="dri/dgpu1"
-      ''
-    ));
+      '')
+
+      # pkgs.khanelinix.r8152-udev-rules
+      (pkgs.writeTextFile {
+        name = "50-usb-realtek-net.rules";
+        text = pkgs.lib.fileContents ./50-usb-realtek-net.rules;
+        destination = "/etc/udev/rules.d/50-usb-realtek-net.rules";
+      })
+    ];
 }
