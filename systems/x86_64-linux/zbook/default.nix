@@ -23,10 +23,6 @@ in
       personal = enabled;
     };
 
-    environments = {
-      home-network = enabled;
-    };
-
     display-managers = {
       # gdm = {
       #   defaultSession = "gnome";
@@ -44,7 +40,6 @@ in
       cpu.intel = enabled;
       gpu.nvidia = enabled;
       opengl = enabled;
-      rgb.openrgb.enable = true;
 
       storage = {
         enable = true;
@@ -84,6 +79,7 @@ in
       geoclue = enabled;
       power = enabled;
       printing = enabled;
+      tailscale.enable = lib.mkForce false;
 
       openssh = {
         enable = true;
