@@ -628,10 +628,10 @@ the sequences will be lost."
 
 (defun my/org-disable-xterm-title-when-tty (window)
   "Disable `xterm-set-window-title` for Org buffers shown in TTY frames."
-  (let ((buffer (window-buffer window)))
-    (with-current-buffer buffer
-      (when (and (derived-mode-p 'org-mode)
-                 (not (display-graphic-p (window-frame window))))
+  (when (and (derived-mode-p 'org-mode)
+             (not (display-graphic-p (window-frame window))))
+    (let ((buffer (window-buffer window)))
+      (with-current-buffer buffer
         (setq-local xterm-set-window-title nil)))))
 
 (use-package! org
