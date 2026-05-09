@@ -81,6 +81,8 @@ in
         #   ];
         # };
 
+        launchers.anyrun.enable = lib.mkForce false;
+
         wms = {
           hyprland = {
             enable = true;

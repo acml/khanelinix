@@ -105,13 +105,13 @@ in
               in
               lib.mkOptionDefault (
                 (lib.optionalAttrs (count > 0) {
-                  "Control+Space" = "exec ${mkStartCommand (builtins.elemAt enabledLaunchers 0)}";
+                  "${swayCfg.modifier}+Space" = "exec ${mkStartCommand (builtins.elemAt enabledLaunchers 0)}";
                 })
                 // (lib.optionalAttrs (count > 1) {
                   "Alt+Space" = "exec ${mkStartCommand (builtins.elemAt enabledLaunchers 1)}";
                 })
                 // (lib.optionalAttrs (count > 2) {
-                  "${swayCfg.modifier}+Space" = "exec ${mkStartCommand (builtins.elemAt enabledLaunchers 2)}";
+                  "Control+Space" = "exec ${mkStartCommand (builtins.elemAt enabledLaunchers 2)}";
                 })
               )
             )

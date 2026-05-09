@@ -148,7 +148,7 @@ in
 
           launcherBinds =
             lib.optionalAttrs (defaultLauncher != null) {
-              "Ctrl+Space" = {
+              "Mod+Space" = {
                 action.spawn = defaultLauncher;
                 allow-inhibiting = false;
               };
@@ -157,7 +157,7 @@ in
               "Alt+Space".action.spawn = altLauncher;
             }
             // lib.optionalAttrs (backupLauncher != null) {
-              "Mod+Space".action.spawn = backupLauncher;
+              "Ctrl+Space".action.spawn = backupLauncher;
             };
 
           pickerBind = lib.optionalAttrs hyprpickerEnabled {

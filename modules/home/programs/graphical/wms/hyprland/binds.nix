@@ -78,9 +78,9 @@ in
                 ];
                 count = builtins.length enabledLaunchers;
               in
-              lib.optional (count > 0) "CTRL, SPACE, exec, $($launcher)"
+              lib.optional (count > 0) "$mainMod, SPACE, exec, $($launcher)"
               ++ lib.optional (count > 1) "ALT, SPACE, exec, $($launcher-alt)"
-              ++ lib.optional (count > 2) "$mainMod, SPACE, exec, $($launcher-backup)";
+              ++ lib.optional (count > 2) "CTRL, SPACE, exec, $($launcher-backup)";
 
             # App launch binds
             appBinds = [
