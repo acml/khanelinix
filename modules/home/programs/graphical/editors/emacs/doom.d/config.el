@@ -193,6 +193,7 @@
   (global-subword-mode 1) ; Iterate through CamelCase words
 
   ;; credit: yorickvP on Github
+  ;; wl-copy integration for Wayland clipboard(need wl-clipboard package)
   (when (and (display-graphic-p)
              (string= (getenv "XDG_SESSION_TYPE") "wayland"))
     (setq wl-copy-process nil)
@@ -207,9 +208,9 @@
     (defun wl-paste ()
       (if (and wl-copy-process (process-live-p wl-copy-process))
           nil ; should return nil if we're the current paste owner
-        (shell-command-to-string "wl-paste -n | tr -d \r")))
-    (setq interprogram-cut-function 'wl-copy
-          interprogram-paste-function 'wl-paste))
+        (shell-command-to-string "wl-paste -n")))
+    (setq interprogram-cut-function 'wl-copy)
+    (setq interprogram-paste-function 'wl-paste))
   :hook (doom-after-init . repeat-mode))
 
 (set-popup-rules! '(("^\\*info\\*" :size 82 :side right :select t :quit t)
