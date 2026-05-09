@@ -394,7 +394,11 @@
   (setq modus-themes-common-palette-overrides
         '(;; (fringe unspecified)
           (border-mode-line-active unspecified)
-          (border-mode-line-inactive unspecified)))
+          (border-mode-line-inactive unspecified))
+        modus-themes-italic-constructs t
+        modus-themes-bold-constructs t
+        modus-themes-mixed-fonts t
+        modus-themes-variable-pitch-ui t)
   (load-theme (if (display-graphic-p) 'ef-eagle 'ef-dark) t))
 
 (after! expand-region
