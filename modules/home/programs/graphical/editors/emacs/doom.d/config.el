@@ -514,8 +514,9 @@ the sequences will be lost."
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-ignored-files
                           'magit-insert-untracked-files
-                          nil)
+                          nil))
 
+(after! magit-repos
   (setq magit-repolist-columns
         '(("Name" 24 magit-repolist-column-ident nil)
           ("Version" 58 magit-repolist-column-version
@@ -627,13 +628,13 @@ the sequences will be lost."
 (setopt org-directory (expand-file-name "~/Documents/org/")
         org-startup-with-inline-images t)
 
-(defun my/org-disable-xterm-title-when-tty (window)
+(defun my/org-disable-xterm-title-when-tty (frame)
   "Disable `xterm-set-window-title` for Org buffers shown in TTY frames."
-  (when (and (derived-mode-p 'org-mode)
-             (not (display-graphic-p (window-frame window))))
-    (let ((buffer (window-buffer window)))
-      (with-current-buffer buffer
-        (setq-local xterm-set-window-title nil)))))
+  (when (and (not (display-graphic-p frame))
+             (with-current-buffer (window-buffer (frame-selected-window frame))
+               (derived-mode-p 'org-mode)))
+    (with-current-buffer (window-buffer (frame-selected-window frame))
+      (setq-local xterm-set-window-title nil))))
 
 (use-package! org
   :defer t
@@ -1311,6 +1312,57 @@ you're done. This can be called from an external shell script."
                 (toggle-truncate-lines -1)
                 (evil-define-key '(normal visual insert emacs) gt-buffer-render-local-map
                   "q" 'kill-buffer-and-window)))))
+
+(use-package! breadcrumb
+  :defer t
+  :when (modulep! :tools lsp +eglot)
+  :config
+  ;; Don't show the project/file name in the header, show only an icon
+  (with-eval-after-load 'nerd-icons
+    (advice-add #'breadcrumb-project-crumbs :override
+                (lambda ()
+                  (concat " " (if-let* ((file buffer-file-name))
+                                  (nerd-icons-icon-for-file file)
+                                (nerd-icons-icon-for-mode major-mode)))))
+    (advice-add #'breadcrumb--format-ipath-node :around
+                (lambda (og p more &rest r)
+                  "Icon for items"
+                  (let ((string (apply og p more r)))
+                    (if (not more)
+                        (propertize
+                         (concat (nerd-icons-codicon
+                                  "nf-cod-symbol_field"
+                                  :face 'breadcrumb-imenu-leaf-face)
+                                 " " string)
+                         'breadcrumb-dont-shorten t
+                         'breadcrumb-with-icon t)
+                      (if (functionp 'nerd-icons-corfu--get-by-kind)
+                          (propertize
+                           (concat (nerd-icons-corfu--get-by-kind (intern (downcase string)) nil)
+                                   " " string)
+                           'breadcrumb-with-icon t)
+                        string)))))
+    (advice-add #'breadcrumb--summarize :override
+                (lambda (crumbs cutoff separator)
+                  (let ((rcrumbs
+                         (cl-loop
+                          for available = (- cutoff used)
+                          for (c . more) on (reverse crumbs)
+                          for seplen = (if more (length separator) 0)
+                          for shorten-p = (unless (get-text-property 0 'breadcrumb-dont-shorten c)
+                                            (> (+ (length c) seplen) available))
+                          ;; NOTE: Include icon and first character
+                          for toadd = (if shorten-p
+                                          (if (get-text-property 0 'breadcrumb-with-icon c)
+                                              (substring c 0 3)
+                                            (substring c 0 1))
+                                        c)
+                          sum (+ (length toadd) seplen) into used
+                          collect toadd)))
+                    (string-join (reverse rcrumbs) separator)))))
+  :hook
+  (prog-mode . breadcrumb-local-mode)
+  (text-mode . breadcrumb-local-mode))
 
 ;; Load a file with the same name as the computer’s name. Just keep on going if
 ;; the requisite file isn't there.
