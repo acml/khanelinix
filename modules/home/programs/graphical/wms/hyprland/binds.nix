@@ -466,11 +466,11 @@ in
                 key = "Q";
                 dispatcher = "killactive";
               })
-              (mkBind {
-                mods = "CTRL_SHIFT";
-                key = "Q";
-                dispatcher = "killactive";
-              })
+              # (mkBind {
+              #   mods = "CTRL_SHIFT";
+              #   key = "Q";
+              #   dispatcher = "killactive";
+              # })
               (mkBind {
                 mods = "$mainMod";
                 key = "F";
@@ -768,13 +768,13 @@ in
                 in
                 [
                   (mkBind {
-                    mods = "$CTRL_ALT";
+                    mods = "SUPER";
                     key = "${ws}";
                     dispatcher = "workspace";
                     args = toString (x + 1);
                   })
                   (mkBind {
-                    mods = "$CTRL_ALT_SUPER";
+                    mods = "SUPER_ALT";
                     key = "${ws}";
                     dispatcher = "movetoworkspace";
                     args = toString (x + 1);
