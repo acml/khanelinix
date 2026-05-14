@@ -89,17 +89,7 @@ in
             enableDebug = false;
 
             settings = {
-              cursor = {
-                no_hardware_cursors = true;
-                enable_hyprcursor = lib.mkForce false;
-              };
-
-              input = {
-                kb_layout = "us";
-                kb_variant = "colemak";
-              };
-
-              monitorv2 = [
+              monitor = [
                 {
                   output = "DP-7";
                   mode = "preferred";
@@ -122,22 +112,60 @@ in
                 }
               ];
 
-              exec-once = [
-                "hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${toString config.khanelinix.theme.gtk.cursor.size}"
-              ];
-
-              workspace = [
-                "1, monitor:DP-7, persistent:true, default:true"
-                "2, monitor:eDP-1, persistent:true, default:true"
-                "3, monitor:DP-8, persistent:true, default:true"
-                "4, monitor:DP-9, persistent:true, default:true"
-                "5, monitor:eDP-1, persistent:true"
-                "6, monitor:eDP-1, persistent:true"
-                "7, monitor:eDP-1, persistent:true"
-                "8, monitor:eDP-1, persistent:true"
-                "9, monitor:eDP-1, persistent:true"
+              workspace_rule = [
+                {
+                  workspace = "1";
+                  monitor = "DP-7";
+                  persistent = true;
+                  default = true;
+                }
+                {
+                  workspace = "2";
+                  monitor = "DP-8";
+                  persistent = true;
+                  default = true;
+                }
+                {
+                  workspace = "3";
+                  monitor = "DP-9";
+                  persistent = true;
+                }
+                {
+                  workspace = "4";
+                  monitor = "eDP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "5";
+                  monitor = "eDP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "6";
+                  monitor = "eDP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "7";
+                  monitor = "eDP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "8";
+                  monitor = "eDP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "9";
+                  monitor = "eDP-1";
+                  persistent = true;
+                }
               ];
             };
+
+            startupCommands = [
+              "hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${toString config.khanelinix.theme.gtk.cursor.size}"
+            ];
           };
 
           niri = {
