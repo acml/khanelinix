@@ -51,6 +51,8 @@ in
         Extra configuration lines to add to top of `~/.config/hypr/hyprland.conf`.
       '';
     };
+    permissions.enforce = lib.mkEnableOption "Hyprland permission enforcement";
+    smartGaps.enable = lib.mkEnableOption "smart gaps for single-window workspaces";
     settings = lib.mkOption {
       type = lib.types.attrs;
       default = { };

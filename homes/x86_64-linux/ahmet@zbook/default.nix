@@ -87,6 +87,7 @@ in
           hyprland = {
             enable = true;
             enableDebug = false;
+            permissions.enforce = true;
 
             settings = {
               monitor = [

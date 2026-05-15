@@ -112,6 +112,7 @@ in
         ++ lib.optionals cfg.aiEnable [
           # NOTE: hard to get out of neovim
           # antigravity
+          t3code
           tuicr
         ];
 
