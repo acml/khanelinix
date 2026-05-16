@@ -7,6 +7,8 @@
 let
 
   cfg = config.khanelinix.suites.development;
+  homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
+  exoEnabled = homeCfg.services.exo.enable or false;
 in
 {
   options.khanelinix.suites.development = {
@@ -23,7 +25,17 @@ in
       3001
       8080
       8081
+    ]
+    ++ lib.optionals exoEnabled [ 52415 ];
+
+    networking.firewall.allowedTCPPortRanges = lib.optionals exoEnabled [
+      {
+        from = 49153;
+        to = 65535;
+      }
     ];
+
+    networking.firewall.allowedUDPPorts = lib.optionals exoEnabled [ 52415 ];
 
     khanelinix = {
       user = {
