@@ -826,7 +826,7 @@ in
             ++ [
               (mkExecBind "$mainMod" "I" "notify-send \"$($window-inspector)\"")
               (mkExecBind "$mainMod" "PERIOD" "smile")
-              (mkExecBind "$CTRL_SHIFT" "B" "killall -SIGUSR1 $bar")
+              (mkExecBind "SUPER_SHIFT" "B" "killall -SIGUSR1 $bar")
             ]
             ++
               lib.optional (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
