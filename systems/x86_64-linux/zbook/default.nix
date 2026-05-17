@@ -5,14 +5,15 @@
 }:
 let
   inherit (lib.khanelinix) enabled;
-  inherit (lib) mkForce mkMerge;
+  inherit (lib) mkForce;
 in
 {
   imports = [
     ./disks.nix
     ./hardware.nix
     ./network.nix
-    # ./specializations.nix
+    ./non-specialised.nix
+    ./specialisation.nix
   ];
 
   khanelinix = {
@@ -41,37 +42,14 @@ in
       tpm = enabled;
     };
 
-    programs = {
-      graphical = {
-        # desktop-environment = {
-        #   gnome = {
-        #     enable = true;
-        #   };
-        # };
-        wms = mkMerge [
-          {
-            hyprland.enable = true;
-            niri = {
-              enable = true;
-              package = pkgs.niri-unstable;
-            };
-          }
-          {
-            sway = {
-              enable = true;
-              withUWSM = true;
-            };
-          }
-        ];
-      };
-    };
+    programs.graphical.wms.niri.package = pkgs.niri-unstable;
 
     services = {
       avahi = enabled;
       geoclue = enabled;
       power = enabled;
       printing = enabled;
-      tailscale.enable = lib.mkForce false;
+      tailscale.enable = mkForce false;
 
       openssh = {
         enable = true;
@@ -133,10 +111,10 @@ in
 
   # console.earlySetup = false;
   # console.keyMap = "colemak";
-  # console.useXkbConfig = lib.mkForce false;
+  # console.useXkbConfig = mkForce false;
   console = {
     earlySetup = true;
-    font = lib.mkForce "ter-122b";
+    font = mkForce "ter-122b";
     packages = with pkgs; [ terminus_font ];
     keyMap = "colemak";
   };
@@ -157,7 +135,7 @@ in
       enable = true;
       noPollBatteries = true;
     };
-    power-profiles-daemon.enable = lib.mkForce false;
+    power-profiles-daemon.enable = mkForce false;
     auto-cpufreq.enable = true;
     auto-cpufreq.settings = {
       battery = {
@@ -169,7 +147,6 @@ in
         turbo = "auto";
       };
     };
-    displayManager.defaultSession = "hyprland-uwsm";
     irqbalance.enable = mkForce false;
     keyd = {
       enable = true;

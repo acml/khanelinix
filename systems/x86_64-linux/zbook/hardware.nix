@@ -60,11 +60,11 @@
       # Enable this if you have graphical corruption issues or application crashes after waking
       # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead
       # of just the bare essentials.
-      powerManagement.enable = lib.mkForce true;
+      powerManagement.enable = true;
 
       # Fine-grained power management. Turns off GPU when not in use.
       # Experimental and only works on modern Nvidia GPUs (Turing or newer).
-      powerManagement.finegrained = lib.mkForce true;
+      powerManagement.finegrained = true;
 
       # Dynamic Boost. It is a technology found in NVIDIA Max-Q design laptops with RTX GPUs.
       # It intelligently and automatically shifts power between
@@ -105,16 +105,16 @@
       # and the discrete Nvidia GPU for performance-intensive tasks.
       prime = {
         offload = {
-          enable = lib.mkForce true;
-          enableOffloadCmd = lib.mkForce true;
+          enable = true;
+          enableOffloadCmd = true;
         };
 
         #!! VERIFY these IDs using `lspci | grep -E 'VGA|3D'`!!
         # Convert hex (e.g., 00:02.0) to decimal PCI:Bus:Device:Function
         intelBusId = "PCI:0:2:0";
         nvidiaBusId = "PCI:1:0:0";
-        sync.enable = lib.mkForce false;
-        reverseSync.enable = lib.mkForce false;
+        sync.enable = false;
+        reverseSync.enable = false;
       };
     };
 

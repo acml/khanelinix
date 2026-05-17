@@ -259,11 +259,11 @@ in
 
           # Shift+Print variants (save to disk instead of clipboard-only)
           "Shift+Print".action.screenshot = [ ];
-          "Alt+Shift+Print" = {
-            action.screenshot-window = {
-              show-pointer = false;
-            };
-          };
+          # "Alt+Shift+Print" = {
+          #   action.screenshot-window = {
+          #     show-pointer = false;
+          #   };
+          # };
           "Mod+Shift+Print" = {
             action.screenshot-screen = {
               show-pointer = false;
