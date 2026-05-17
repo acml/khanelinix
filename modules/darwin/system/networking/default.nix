@@ -9,6 +9,7 @@ let
   cfg = config.khanelinix.system.networking;
   homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
   exoEnabled = homeCfg.services.exo.enable or false;
+  exoLibp2pPort = 52416;
   python3 = lib.getExe pkgs.python3;
   localNetworkPrivilegesCleanup = ./local-network-privileges-cleanup.py;
 in
@@ -121,22 +122,19 @@ in
         loadLine="load anchor \"$anchorName\" from \"$anchorFile\""
 
         ${lib.optionalString exoEnabled ''
-          echo >&2 "Configuring PF rules for exo MLX ring ports..."
+          echo >&2 "Configuring PF rules for exo ports..."
 
           /usr/bin/install -d -m 0755 -o root -g wheel /etc/pf.anchors
-          /bin/cat > "$anchorFile.tmp" <<'EOF'
-# Allow exo MLX Ring's random high TCP ports on trusted private IPv4 networks.
-pass in inet proto tcp from { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 } to any port 49153:65535
-EOF
+          /usr/bin/printf '%s\n' \
+            "# Allow exo's fixed libp2p port and MLX Ring's random high TCP ports on trusted private IPv4 networks." \
+            "pass in inet proto tcp from { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 } to any port ${toString exoLibp2pPort}" \
+            "pass in inet proto tcp from { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 } to any port 49153:65535" \
+            > "$anchorFile.tmp"
           /usr/bin/install -m 0644 -o root -g wheel "$anchorFile.tmp" "$anchorFile"
           /bin/rm -f "$anchorFile.tmp"
 
           if ! /usr/bin/grep -qxF "$anchorLine" "$pfConf"; then
-            /bin/cat >> "$pfConf" <<EOF
-
-$anchorLine
-$loadLine
-EOF
+            /usr/bin/printf '\n%s\n%s\n' "$anchorLine" "$loadLine" >> "$pfConf"
           elif ! /usr/bin/grep -qxF "$loadLine" "$pfConf"; then
             /bin/echo "$loadLine" >> "$pfConf"
           fi
