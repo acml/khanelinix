@@ -54,7 +54,7 @@
 
       # forceFullCompositionPipeline = true;
       # Modesetting is required.
-      # modesetting.enable = lib.mkForce true;
+      modesetting.enable = true;
 
       # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
       # Enable this if you have graphical corruption issues or application crashes after waking
@@ -124,7 +124,7 @@
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = [
-    # "modesetting"
+    "modesetting"
     "nvidia"
   ];
 
