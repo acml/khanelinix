@@ -33,10 +33,12 @@ let
   '';
 
   cfg = config.khanelinix.suites.development;
-  exoEnabled = config.services.exo.enable or false;
   exoLibp2pPort = 52416;
   exoLogDir = "${config.home.homeDirectory}/Library/Logs/exo";
   hostName = osConfig.networking.hostName or "";
+  exoEnabled = config.services.exo.enable or false;
+  # TODO: Re-enable Linux exo workers when upstream supports AMD GPU acceleration.
+  exoDisableWorker = pkgs.stdenv.hostPlatform.isLinux;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
@@ -57,6 +59,7 @@ in
       packages =
         with pkgs;
         [
+          devenv
           python3
           # FIXME: broken nixpkgs
           # cutter
@@ -82,7 +85,6 @@ in
           podman-tui
         ]
         ++ lib.optionals cfg.nixEnable [
-          devenv
           hydra-check
           khanelinix.build-by-path
           nix-bisect
@@ -225,7 +227,7 @@ in
     };
 
     services.exo = {
-      enable = mkDefault cfg.aiEnable;
+      enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
       environmentVariables = {
         EXO_LIBP2P_NAMESPACE = "khanelinix";
         EXO_MODELS_READ_ONLY_DIRS = lib.concatStringsSep ":" [
@@ -240,9 +242,21 @@ in
       ]
       ++ lib.optionals (hostName == "khanelinix") [
         "--force-master"
+      ]
+      ++ lib.optionals exoDisableWorker [
+        "--no-worker"
       ];
     };
 
+    launchd.agents.exo.config = lib.mkIf exoEnabled {
+      StandardOutPath = "${exoLogDir}/exo.out.log";
+      StandardErrorPath = "${exoLogDir}/exo.err.log";
+    };
+
+    # NOTE: Recommended Darwin MLX downloads for LM Studio/exo on 64 GB Apple Silicon:
+    # - Agentic coding: mlx-community/Qwen3-Coder-Next-4bit
+    # - General reasoning / financial analysis: mlx-community/gpt-oss-20b-MXFP4-Q8
+    # - Creative and long-context work: mlx-community/Qwen3.6-35B-A3B-5bit
     home.activation.linkLmStudioExoModels =
       let
         lmStudioModelsDir = "${config.home.homeDirectory}/.lmstudio/models";
@@ -268,11 +282,6 @@ in
           )}
         ''
       );
-
-    launchd.agents.exo.config = lib.mkIf exoEnabled {
-      StandardOutPath = "${exoLogDir}/exo.out.log";
-      StandardErrorPath = "${exoLogDir}/exo.err.log";
-    };
 
     sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
       OPENAI_SECURA_KEY = {
