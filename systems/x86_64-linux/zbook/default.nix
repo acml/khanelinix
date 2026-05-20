@@ -42,6 +42,8 @@ in
       tpm = enabled;
     };
 
+    programs.graphical.addons.looking-glass-client.enable = true;
+    programs.graphical.addons.looking-glass-client.enableKvmfr = true;
     programs.graphical.wms.niri.package = pkgs.niri-unstable;
 
     services = {

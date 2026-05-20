@@ -432,6 +432,8 @@ in
     # })
   ];
 
+  programs.vinegar.enable = false;
+
   # Configure monitors independently and override module default
   programs.hyprlock.settings.background = lib.mkForce (
     let
