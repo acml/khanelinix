@@ -61,6 +61,8 @@
 (package! ef-themes)
 (package! exercism)
 (package! google-c-style)
+(package! ghostel :built-in 'prefer)
+;; (package! evil-ghostel)
 (package! gptel-agent)
 (package! gt)
 (package! highlight-parentheses :recipe (:host github :repo "emacsmirror/highlight-parentheses"))
