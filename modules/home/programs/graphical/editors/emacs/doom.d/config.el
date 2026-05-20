@@ -86,6 +86,7 @@
       x-stretch-cursor t           ; Stretch cursor to the glyph width
       undo-limit 80000000          ; Raise undo-limit to 80Mb
       auto-save-default t          ; Nobody likes to loose work, I certainly don't
+      auto-revert-avoid-polling t  ; refresh buffers when files change on disk
       truncate-string-ellipsis "…" ; Unicode ellispis are nicer than "...", and also save /precious/ space
       window-resize-pixelwise t
       frame-resize-pixelwise t
@@ -1056,18 +1057,15 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
   (set (make-local-variable 'buffer-face-mode-face) '(:family "IosevkaTerm Nerd Font"))
   (buffer-face-mode t))
 
-(setq which-key-allow-multiple-replacements t)
 (after! which-key
-  ;; rename winum-select-window-1 entry to 1..9
-  (cl-pushnew '(("\\(.*\\)1" . "winum-select-window-1") . ("\\11..9" . "Switch to window 1..9"))
-              which-key-replacement-alist)
-  ;; hide winum-select-window-[2-9] entries
-  (cl-pushnew '((nil . "winum-select-window-[2-9]") . t)
-              which-key-replacement-alist)
-  (cl-pushnew '(("" . "\\`+?evil[-:/]?\\(?:a-\\)?\\(.*\\)") . (nil . " \\1"))
-              which-key-replacement-alist)
-  (cl-pushnew '(("\\`g s" . "\\`evilem--?motion-\\(.*\\)") . (nil . " \\1"))
-              which-key-replacement-alist))
+  (setq which-key-allow-multiple-replacements t)
+  (dolist (r '((("\\(.*\\)1" . "winum-select-window-1") . ("\\11..9" . "Switch to window 1..9")) ; rename winum-select-window-1 entry to 1..9
+               ((nil . "winum-select-window-[2-9]") . t)                                         ; hide winum-select-window-[2-9] entries
+               (("" . "\\`+?evil[-:]?\\(?:a-\\)?\\(.*\\)") . (nil . "\\1"))
+               (("\\`g s" . "\\`evilem--?motion-\\(.*\\)") . (nil . "\\1"))
+               ;; (("" . "\\`+?Magit\\(.*\\)") . (nil . "\\1"))
+               ))
+    (add-to-list 'which-key-replacement-alist r)))
 
 ;; text mode directory tree
 (after! ztree
