@@ -116,10 +116,16 @@ in
           # mysql-workbench
         ]
         ++ lib.optionals cfg.aiEnable [
-          # NOTE: hard to get out of neovim
-          # antigravity
+          agentsview
+          antigravity
+          ccusage
+          ck
+          hunk
           tuicr
           lmstudio
+          vibe-kanban
+          workmux
+          zat
         ];
 
       shellAliases = {

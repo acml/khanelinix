@@ -13,12 +13,24 @@ in
   #          │                       LLM programs                       │
   #          ╰──────────────────────────────────────────────────────────╯
   inherit (inputs.llm-agents.packages.${system})
+    agentsview
+    antigravity
+    ccusage
+    ck
     claude-code
     codex
     gemini-cli
+    git-surgeon
+    hunk
     opencode
     tuicr
+    vibe-kanban
+    workmux
+    zat
     ;
+
+  github-copilot-cli = inputs.llm-agents.packages.${system}.copilot-cli;
+  pi-coding-agent = inputs.llm-agents.packages.${system}.pi;
 
   #          ╭──────────────────────────────────────────────────────────╮
   #          │ From nixpkgs-master (fast updating / want latest always) │
