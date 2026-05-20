@@ -1048,7 +1048,7 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
       :map vterm-mode-map
       "<deletechar>" #'vterm-send-delete)
 
-(add-hook! 'vterm-mode-hook
+(add-hook! '(vterm-mode-hook ghostel-mode-hook)
   (set (make-local-variable 'buffer-face-mode-face) '(:family "IosevkaTerm Nerd Font"))
   (buffer-face-mode t))
 
@@ -1188,11 +1188,6 @@ you're done. This can be called from an external shell script."
 (map! "<f8>" #'projectile-repeat-last-command)
 ;; (map! "<f9>" #'acml-set-keyboard)
 ;; F12
-
-(use-package! yazi
-  :defer t
-  :init
-  (map! (:leader :desc "Yazi" :n "oy" #'yazi)))
 
 (use-package zone :disabled
   :config
