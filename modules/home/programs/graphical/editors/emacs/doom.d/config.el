@@ -967,15 +967,19 @@ will ensure are ignored")
      :preview-key (list "C-SPC" :debounce 0.2 'any))))
 
 (use-package! ghostel
+  :after-call doom-first-input-hook
   :defer t
   :hook (ghostel-mode . mode-line-invisible-mode)
   :commands (ghostel ghostel-project)
   :init
-  (require 'ghostel-compile)
-  (ghostel-compile-global-mode 1)
-  ;; (map! :leader "o t" #'ghostel)
   (set-popup-rule! "^\\*doom:ghostel-popup:" :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
   (set-evil-initial-state! 'ghostel-mode 'emacs))
+
+(use-package! ghostel-compile
+  :after-call doom-first-input-hook
+  :defer t
+  :config
+  (ghostel-compile-global-mode 1))
 
 ;; (use-package! evil-ghostel
 ;;   :after (ghostel evil)
