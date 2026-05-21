@@ -93,7 +93,6 @@ in
           "arrow-parent" = ./plugins/arrow-parent.yazi;
           "smart-switch" = ./plugins/smart-switch.yazi;
           "smart-tab" = ./plugins/smart-tab.yazi;
-          "folder-rules" = ./plugins/folder-rules.yazi;
           githead = mkYaziPlugin {
             pname = "githead.yazi";
             version = "26.1.22-unstable-2026-01-26";
@@ -163,8 +162,14 @@ in
               show_symlink = true;
               sort_by = "alphabetical";
               sort_dir_first = true;
+              sort_fallback = "natural";
               sort_reverse = false;
               sort_sensitive = false;
+              mouse_events = [
+                "click"
+                "scroll"
+                "drag"
+              ];
             };
 
             pick = {
