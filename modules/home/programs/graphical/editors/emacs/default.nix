@@ -266,14 +266,13 @@ in
         with pkgs;
         [
           # fonts
+          aporetic
           emacs-all-the-icons-fonts
           hack-font
-          iosevka-comfy.comfy
           (lib.mkIf isLinux quivira)
           symbola
           unifont
           nerd-fonts.blex-mono
-          nerd-fonts.iosevka
           nerd-fonts.iosevka-term
           nerd-fonts.symbols-only
           nerd-fonts.overpass

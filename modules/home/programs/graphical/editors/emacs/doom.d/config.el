@@ -63,14 +63,15 @@
       ;;
       ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
       ;; font string. You generally only need these two:
-      doom-font (font-spec :family "Iosevka Comfy" :size (cond ((featurep :system 'macos) 13.0)
-                                                               ((string= (system-name) "dinm5CG52813LW") 10.8)
-                                                               (t 12.0)))
-      doom-big-font (font-spec :family "Iosevka Comfy" :size (if (featurep :system 'macos) 26.0 20.0))
+      doom-font (font-spec :family "Aporetic Sans Mono" :size (cond ((featurep :system 'macos) 13.0)
+                                                                    ((string= (system-name) "dinm5CG52813LW") 10.8)
+                                                                    (t 12.0)))
+      doom-big-font (font-spec :family "Aporetic Sans Mono" :size (if (featurep :system 'macos) 26.0 20.0))
       doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size (cond ((featurep :system 'macos) 13.0)
                                                                                    ((string= (system-name) "dinm5CG52813LW") 10.8)
                                                                                    (t 12.0)))
       doom-serif-font (font-spec :family "BlexMono Nerd Font" :size (if (featurep :system 'macos) 13.0 12.0) :weight 'light)
+      doom-symbol-font (font-spec :family "Symbols Nerd Font" :size (if (featurep :system 'macos) 13.0 12.0))
 
       fancy-splash-image (funcall
                           (lambda (choices) (elt
