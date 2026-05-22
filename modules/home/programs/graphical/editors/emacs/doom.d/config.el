@@ -360,11 +360,12 @@
 (after! vertico-multiform
   (add-to-list 'vertico-multiform-categories '(embark-keybinding grid)))
 
-(use-package! exercism :commands (exercism)
-              :init
-              (map! (:leader :desc "Exercism" :n "ox" #'exercism))
-              :config
-              (setq exercism-directory "~/Projects/exercism"))
+(use-package! exercism
+  :commands (exercism)
+  :init
+  (map! (:leader :desc "Exercism" :n "ox" #'exercism))
+  :config
+  (setq exercism-directory "~/Projects/exercism"))
 
 (after! evil
   (setq
