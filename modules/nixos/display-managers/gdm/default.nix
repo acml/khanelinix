@@ -42,7 +42,7 @@ in
         gdm = {
           # GDM documentation
           # See: https://wiki.gnome.org/Projects/GDM
-          inherit (cfg) enable wayland autoSuspend;
+          inherit (cfg) enable autoSuspend;
         };
         # Keep SDDM disabled because this module manages the GDM session directly.
         sddm.enable = lib.mkForce false;
