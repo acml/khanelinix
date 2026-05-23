@@ -5,10 +5,14 @@ import subprocess
 
 DB_PATH = "/Library/Application Support/com.apple.TCC/TCC.db"
 SERVICE = "kTCCServiceAccessibility"
-STABLE_CLIENTS = [
-    os.path.expanduser("~/.local/bin/skhd-stable"),
-    os.path.expanduser("~/.local/bin/yabai-stable"),
-]
+
+
+def stable_clients():
+    user_home = os.environ["KHANELINIX_TCC_ACCESSIBILITY_USER_HOME"]
+    return [
+        os.path.join(user_home, ".local/bin/skhd-stable"),
+        os.path.join(user_home, ".local/bin/yabai-stable"),
+    ]
 
 
 def cdhash(path):
@@ -26,25 +30,9 @@ def cdhash(path):
     return match.group(1).upper() if match else None
 
 
-def write_summary(message):
-    summary_path = os.environ.get("KHANELINIX_TCC_ACCESSIBILITY_SUMMARY")
-    if not summary_path:
-        return
-
-    with open(summary_path, "w", encoding="utf-8") as handle:
-        handle.write(message)
-
-
-def write_changed(changed):
-    changed_path = os.environ.get("KHANELINIX_TCC_ACCESSIBILITY_CHANGED")
-    if not changed_path:
-        return
-
-    with open(changed_path, "w", encoding="utf-8") as handle:
-        handle.write("1" if changed else "0")
-
-
 def main():
+    stable_client_paths = stable_clients()
+
     with sqlite3.connect(DB_PATH) as connection:
         rows = connection.execute(
             """
@@ -57,7 +45,7 @@ def main():
                 or client in (?, ?)
               )
             """,
-            (SERVICE, *STABLE_CLIENTS),
+            (SERVICE, *stable_client_paths),
         ).fetchall()
 
         stale_clients = set()
@@ -67,7 +55,7 @@ def main():
                     stale_clients.add(client)
                 continue
 
-            if client in STABLE_CLIENTS:
+            if client in stable_client_paths:
                 current_cdhash = cdhash(client)
                 if current_cdhash is None or current_cdhash not in csreq:
                     stale_clients.add(client)
@@ -75,8 +63,7 @@ def main():
         stale_clients = sorted(stale_clients)
 
         if not stale_clients:
-            write_changed(False)
-            write_summary("No stale Accessibility TCC entries found.")
+            print("No stale Accessibility TCC entries found.")
             return
 
         connection.executemany(
@@ -89,8 +76,7 @@ def main():
             [(SERVICE, client) for client in stale_clients],
         )
 
-    write_changed(True)
-    write_summary(
+    print(
         "Pruned "
         + str(len(stale_clients))
         + " stale Accessibility TCC entries: "
