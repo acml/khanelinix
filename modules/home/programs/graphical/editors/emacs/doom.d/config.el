@@ -405,6 +405,16 @@
         modus-themes-variable-pitch-ui t)
   (load-theme (if (display-graphic-p) 'ef-eagle 'ef-dark) t))
 
+(when (featurep :system 'macos)
+  (defun my-apply-theme (appearance)
+    "Load theme based on APPEARANCE (light or dark)."
+    (mapc #'disable-theme custom-enabled-themes)
+    (pcase appearance
+      ('light (load-theme 'ef-eagle t))
+      ('dark (load-theme 'ef-dark t))))
+
+  (add-hook 'ns-system-appearance-change-functions #'my-apply-theme))
+
 (after! expand-region
   (define-key evil-visual-state-map (kbd "v") 'er/expand-region))
 
@@ -1185,7 +1195,7 @@ you're done. This can be called from an external shell script."
       (map! "<f9>" #'acml-set-keyboard)
       (acml-set-keyboard))))
 
-(map! "<f5>" #'projectile-run-project)
+(map! "<f5>" #'(lambda () (interactive) (let (compilation-read-command) (projectile-run-project nil))))
 (map! "<f6>" #'previous-error)
 (map! "<f7>" #'next-error)
 (map! "<S-f8>" #'projectile-compile-project)
