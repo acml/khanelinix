@@ -24,6 +24,11 @@ in
       personal = enabled;
     };
 
+    display-managers = {
+      gdm.monitors = ./monitors.xml;
+      regreet.hyprlandOutput = builtins.readFile ./hyprlandOutput;
+    };
+
     hardware = {
       audio = {
         enable = true;
