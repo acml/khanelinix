@@ -21,14 +21,14 @@ in
           #Browsers - Move all Firefox windows to workspace 2 by default
           {
             match.class = firefoxClass;
-            workspace = "2";
+            workspace = "9";
           }
           # Secondary Monitor Media
           # Exception rule to override the above rule - Media sites go to workspace 1
           {
             match.class = firefoxClass;
             match.title = mediaTitle;
-            workspace = "1";
+            workspace = "10";
           }
 
           {
@@ -38,7 +38,7 @@ in
           }
           # Code
           {
-            match.class = "^(Code|neovide|GitHub Desktop|GitKraken|robloxstudiobeta.exe)$";
+            match.class = "^(Code|emacs|neovide|GitHub Desktop|GitKraken|robloxstudiobeta.exe)$";
             workspace = "3";
           }
           # Gaming
@@ -132,7 +132,7 @@ in
                     local class = string.lower(window.class or "")
                     if class == "firefox" or class == "firefox-devedition" then
                       local title = string.lower(window.title or "")
-                      local target = "2"
+                      local target = "9"
 
                       if title:find("hidden tabs %- workona") then
                         target = "special:inactive"
@@ -142,11 +142,11 @@ in
 
                       local shouldRoute = true
 
-                      if target == "2" and ${lib.boolToString (!allowDefaultRoute)} then
+                      if target == "9" and ${lib.boolToString (!allowDefaultRoute)} then
                         shouldRoute = false
                       end
 
-                      if target ~= "2" and window.workspace ~= nil and window.workspace.name ~= "2" then
+                      if target ~= "9" and window.workspace ~= nil and window.workspace.name ~= "9" then
                         shouldRoute = false
                       end
 

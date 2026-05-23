@@ -68,6 +68,9 @@ in
             lib.optionals config.programs.firefox.enable [
               (mkStartCommand "${getExe config.programs.firefox.package}")
             ]
+            ++ lib.optionals config.khanelinix.programs.graphical.editors.emacs.enable [
+              (mkStartCommand "${getExe config.programs.emacs.package}")
+            ]
             # Background applications (background-graphical.slice) - communication clients, often idle
             # NOTE: rarely use anymore
             # ++ lib.optionals config.programs.vesktop.enable [

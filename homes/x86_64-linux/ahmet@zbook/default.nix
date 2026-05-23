@@ -114,20 +114,36 @@ in
 
               workspace_rule = [
                 {
-                  workspace = "1";
+                  workspace = "8";
                   monitor = "DP-7";
                   persistent = true;
                   default = true;
                 }
                 {
-                  workspace = "2";
+                  workspace = "9";
                   monitor = "DP-8";
                   persistent = true;
                   default = true;
                 }
                 {
-                  workspace = "3";
+                  workspace = "10";
                   monitor = "DP-9";
+                  persistent = true;
+                }
+                {
+                  workspace = "1";
+                  monitor = "eDP-1";
+                  persistent = true;
+                  default = true;
+                }
+                {
+                  workspace = "2";
+                  monitor = "eDP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "3";
+                  monitor = "eDP-1";
                   persistent = true;
                 }
                 {
@@ -147,16 +163,6 @@ in
                 }
                 {
                   workspace = "7";
-                  monitor = "eDP-1";
-                  persistent = true;
-                }
-                {
-                  workspace = "8";
-                  monitor = "eDP-1";
-                  persistent = true;
-                }
-                {
-                  workspace = "9";
                   monitor = "eDP-1";
                   persistent = true;
                 }

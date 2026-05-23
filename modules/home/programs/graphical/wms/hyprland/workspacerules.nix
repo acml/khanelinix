@@ -35,7 +35,7 @@ in
 
             # Code
             {
-              workspace = "3";
+              workspace = "10";
               on_created_empty = "kitty zellij";
             }
             # Gaming
