@@ -25,7 +25,8 @@ When invoked, route to one mode:
 5. **flake-maintenance** — update, inspect, and validate flake inputs/locks.
 6. **eval-performance** — benchmark, profile, and optimize Nix evaluation
    performance.
-7. **ifd-remediation** — detect, diagnose, and refactor Import From Derivation (IFD) bottlenecks.
+7. **ifd-remediation** — detect, diagnose, and refactor Import From Derivation
+   (IFD) bottlenecks.
 8. **nix-authoring** — delegate to `writing-nix`; stop reading this skill unless
    operational debugging is also needed.
 

@@ -54,20 +54,32 @@ default. Override with `--allow-private`.
 
 ## Colocated Git HEAD and Working Copy Behavior
 
-In colocated repositories, the working copy is always represented as a commit (`@`).
+In colocated repositories, the working copy is always represented as a commit
+(`@`).
 
 ### Why Git HEAD is Detached
-When the working copy has uncommitted changes, `@` becomes a non-empty commit. Because this commit has no bookmark/branch pointing to it, Git's HEAD will automatically be detached at the working copy commit hash. **This is normal and expected behavior.**
+
+When the working copy has uncommitted changes, `@` becomes a non-empty commit.
+Because this commit has no bookmark/branch pointing to it, Git's HEAD will
+automatically be detached at the working copy commit hash. **This is normal and
+expected behavior.**
 
 ### Danger of Pointing Bookmarks to `@`
-Never point branch bookmarks to the working copy `@` (e.g. `jj bookmark set main -r @`) if `@` contains active, uncommitted changes. Doing so will move the branch bookmark to include those uncommitted changes, effectively committing them to the branch in Git's history with no description.
+
+Never point branch bookmarks to the working copy `@` (e.g.
+`jj bookmark set main -r @`) if `@` contains active, uncommitted changes. Doing
+so will move the branch bookmark to include those uncommitted changes,
+effectively committing them to the branch in Git's history with no description.
 
 Bookmarks should always point to clean, finalized parent commits (e.g. `@-`).
 
 ### Recovery from Accidental Working Copy Committing
-If you accidentally moved a bookmark (like `main`) to a dirty working copy commit:
 
-1. Move the bookmark back to the correct clean parent commit (e.g. `ParentCommitID`):
+If you accidentally moved a bookmark (like `main`) to a dirty working copy
+commit:
+
+1. Move the bookmark back to the correct clean parent commit (e.g.
+   `ParentCommitID`):
    ```bash
    jj bookmark set main -r ParentCommitID --allow-backwards
    ```
@@ -85,9 +97,11 @@ If you accidentally moved a bookmark (like `main`) to a dirty working copy commi
    ```
 
 ### Advancing Bookmarks Forward
-Because bookmarks do not automatically follow new working copy commits, when you split a commit or create a new clean commit and want to get it onto your branch (e.g., `main`), you must explicitly move the bookmark forward to that commit:
+
+Because bookmarks do not automatically follow new working copy commits, when you
+split a commit or create a new clean commit and want to get it onto your branch
+(e.g., `main`), you must explicitly move the bookmark forward to that commit:
+
 ```bash
 jj bookmark set main -r CleanCommitID
 ```
-
-

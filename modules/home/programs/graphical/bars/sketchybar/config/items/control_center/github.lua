@@ -125,7 +125,7 @@ end
 local function notification_refresh_debounce_command()
 	return "token=$(uuidgen); "
 		.. "debounce_file=${TMPDIR:-/tmp}/sketchybar_github_update_debounce; "
-		.. "printf %s \"$token\" > \"$debounce_file\"; "
+		.. 'printf %s "$token" > "$debounce_file"; '
 		.. "( sleep "
 		.. tostring(click_refresh_debounce_seconds)
 		.. '; current=$(cat "$debounce_file" 2>/dev/null); '

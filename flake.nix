@@ -71,6 +71,12 @@
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hyprland = {
+      url = "github:hyprwm/hyprland";
+      inputs = {
+        pre-commit-hooks.follows = "";
+      };
+    };
     khanelivim = {
       url = "github:khaneliman/khanelivim";
       inputs = {

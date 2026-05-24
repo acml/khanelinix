@@ -1,30 +1,38 @@
 # Import From Derivation (IFD) Remediation
 
-Use this playbook to detect, diagnose, and refactor Import From Derivation (IFD) bottlenecks in Nix evaluations.
+Use this playbook to detect, diagnose, and refactor Import From Derivation (IFD)
+bottlenecks in Nix evaluations.
 
 ---
 
 ## 1. Mechanics and Lexical Sinks
 
-Import From Derivation occurs when the Nix evaluator requires the output of an unrealized derivation to complete the instantiation of the dependency graph. This forces a synchronous, single-threaded build during the evaluation phase, leading to "head-of-line blocking."
+Import From Derivation occurs when the Nix evaluator requires the output of an
+unrealized derivation to complete the instantiation of the dependency graph.
+This forces a synchronous, single-threaded build during the evaluation phase,
+leading to "head-of-line blocking."
 
 ### Lexical Triggers (Sinks)
 
-When the argument passed to any of the following functions is a **derivation object** or a **store path requiring realization**, it triggers an IFD block:
+When the argument passed to any of the following functions is a **derivation
+object** or a **store path requiring realization**, it triggers an IFD block:
 
-| built-in function | Operational Purpose |
-|:---|:---|
-| `import expr` | Parses and evaluates a Nix expression from the resulting file. |
-| `builtins.readFile expr` | Ingests the contents of a file and returns it as a Nix string. |
-| `builtins.readDir expr` | Returns an attribute set mapping filenames to file types in a directory. |
-| `builtins.pathExists expr` | Returns a boolean indicating if a specific path exists. |
-| `builtins.filterSource f expr` | Filters a source tree based on a user-defined predicate function. |
-| `builtins.path { path = expr; }` | Adds a path to the Nix store and returns its formalized store path. |
-| `builtins.hashFile t expr` | Computes the cryptographic hash of a file. |
-| `builtins.scopedImport x drv` | Imports a Nix expression while overriding the default lexical scope. |
+| built-in function                | Operational Purpose                                                      |
+| :------------------------------- | :----------------------------------------------------------------------- |
+| `import expr`                    | Parses and evaluates a Nix expression from the resulting file.           |
+| `builtins.readFile expr`         | Ingests the contents of a file and returns it as a Nix string.           |
+| `builtins.readDir expr`          | Returns an attribute set mapping filenames to file types in a directory. |
+| `builtins.pathExists expr`       | Returns a boolean indicating if a specific path exists.                  |
+| `builtins.filterSource f expr`   | Filters a source tree based on a user-defined predicate function.        |
+| `builtins.path { path = expr; }` | Adds a path to the Nix store and returns its formalized store path.      |
+| `builtins.hashFile t expr`       | Computes the cryptographic hash of a file.                               |
+| `builtins.scopedImport x drv`    | Imports a Nix expression while overriding the default lexical scope.     |
 
 > [!NOTE]
-> Utilizing these functions on static local repository paths (e.g. `builtins.readFile ./config.json`) does **not** trigger IFD. The file must originate from a derivation output (e.g. `pkgs.runCommand` or a fetched remote source).
+> Utilizing these functions on static local repository paths (e.g.
+> `builtins.readFile ./config.json`) does **not** trigger IFD. The file must
+> originate from a derivation output (e.g. `pkgs.runCommand` or a fetched remote
+> source).
 
 ---
 
@@ -32,7 +40,9 @@ When the argument passed to any of the following functions is a **derivation obj
 
 ### Enforcing Strict Hermetic Evaluation
 
-To detect IFD or prevent it entirely, set the `allow-import-from-derivation` option to `false`. When disabled, Nix throws a fatal error immediately upon encountering an IFD.
+To detect IFD or prevent it entirely, set the `allow-import-from-derivation`
+option to `false`. When disabled, Nix throws a fatal error immediately upon
+encountering an IFD.
 
 Run the following commands to check for IFD:
 
@@ -45,13 +55,15 @@ nix flake check --allow-import-from-derivation false
 
 ### Error Signatures
 
-If an IFD is triggered under strict evaluation, you will encounter the following output:
+If an IFD is triggered under strict evaluation, you will encounter the following
+output:
 
 ```text
 error: cannot build '/nix/store/...-source.drv' during evaluation because the option 'allow-import-from-derivation' is disabled
 ```
 
-For cross-compilation contexts, this may also manifest as host/target mismatches:
+For cross-compilation contexts, this may also manifest as host/target
+mismatches:
 
 ```text
 error: a 'aarch64-darwin' with features {} is required to build '/nix/store/...', but I am a 'x86_64-linux' with features {}
@@ -61,12 +73,17 @@ error: a 'aarch64-darwin' with features {} is required to build '/nix/store/...'
 
 When the source of an IFD is obscured by layers of abstractions:
 
-1. **Step-by-Step Print Tracing**: Inject `builtins.trace` around suspected sinks. If evaluation stalls after a specific print, the subsequent expression contains the IFD.
-2. **Detailed Stack Trace & Debugger**: Run the evaluation with the interactive debugger:
+1. **Step-by-Step Print Tracing**: Inject `builtins.trace` around suspected
+   sinks. If evaluation stalls after a specific print, the subsequent expression
+   contains the IFD.
+2. **Detailed Stack Trace & Debugger**: Run the evaluation with the interactive
+   debugger:
    ```bash
    nix build .#package --show-trace --debugger --print-build-logs --verbose
    ```
-3. **Static Analysis**: Scan the abstract syntax tree for occurrences of filesystem sinks (`readFile`, `import`) referencing variable targets that resolve to derivations.
+3. **Static Analysis**: Scan the abstract syntax tree for occurrences of
+   filesystem sinks (`readFile`, `import`) referencing variable targets that
+   resolve to derivations.
 
 ---
 
@@ -74,9 +91,12 @@ When the source of an IFD is obscured by layers of abstractions:
 
 ### Protocol Alpha: Explicit Parameterization (Rust / Crane)
 
-**Context**: Crane attempts to automatically discover `pname` and `version` by reading `Cargo.toml` of a source tree. If the source tree is a remote input (e.g. from a flake input), reading it triggers an IFD block.
+**Context**: Crane attempts to automatically discover `pname` and `version` by
+reading `Cargo.toml` of a source tree. If the source tree is a remote input
+(e.g. from a flake input), reading it triggers an IFD block.
 
-**Remediation**: Explicitly provide static attributes to bypass dynamic file inspection.
+**Remediation**: Explicitly provide static attributes to bypass dynamic file
+inspection.
 
 ```nix
 # Anti-pattern: Reading Cargo.toml from remote source triggers IFD
@@ -98,9 +118,13 @@ my-crate = craneLib.buildPackage {
 
 ### Protocol Beta: De-shelling / Native Nix Sinks
 
-**Context**: Using shell commands inside a utility derivation (e.g. `runCommand` with `gcc`, `sed`, or `jq`) to preprocess configuration strings, and then importing them.
+**Context**: Using shell commands inside a utility derivation (e.g. `runCommand`
+with `gcc`, `sed`, or `jq`) to preprocess configuration strings, and then
+importing them.
 
-**Remediation**: Perform file filtering and string transformations natively in Nix using built-ins (`builtins.split`, `builtins.replaceStrings`, `builtins.fromJSON`, or standard library string helpers).
+**Remediation**: Perform file filtering and string transformations natively in
+Nix using built-ins (`builtins.split`, `builtins.replaceStrings`,
+`builtins.fromJSON`, or standard library string helpers).
 
 ```nix
 # Anti-pattern: GCC preprocessor strips comments, triggering IFD
@@ -120,16 +144,19 @@ settings = builtins.fromJSON (
 
 ### Protocol Gamma: Materialization (Haskell / haskell.nix / cabal2nix)
 
-**Context**: Generating package and dependency graphs dynamically using tools like `cabal2nix` or `haskell.nix`.
+**Context**: Generating package and dependency graphs dynamically using tools
+like `cabal2nix` or `haskell.nix`.
 
-**Remediation**: Capture the dynamically generated files and save them to the repository (materialization). Evaluations can then read the static files directly.
+**Remediation**: Capture the dynamically generated files and save them to the
+repository (materialization). Evaluations can then read the static files
+directly.
 
 1. Create a script to generate and commit the files locally:
    ```bash
    #!/usr/bin/env bash
    # update-nix-from-cabal.sh
    set -euo pipefail
-   
+
    for cabal_file in */*.cabal; do
      dir=$(dirname "$cabal_file")
      echo "Generating $dir/default.nix from $cabal_file"
@@ -146,15 +173,20 @@ settings = builtins.fromJSON (
 
 ### Protocol Delta: Pre-fetching External Dependencies
 
-**Context**: Dynamic fetches during evaluation to resolve dependency lists or lockfiles.
+**Context**: Dynamic fetches during evaluation to resolve dependency lists or
+lockfiles.
 
-**Remediation**: Decouple network calls from evaluation by locking revisions and cryptographic hashes beforehand using Flakes (`flake.lock`), `niv`, or `npins`. Nix can then evaluate against the pre-fetched local metadata instantly.
+**Remediation**: Decouple network calls from evaluation by locking revisions and
+cryptographic hashes beforehand using Flakes (`flake.lock`), `niv`, or `npins`.
+Nix can then evaluate against the pre-fetched local metadata instantly.
 
 ---
 
 ## 4. Evaluator Tuning: Parallel Evaluation
 
-If IFD is architecturally unavoidable (e.g. dynamic multi-architecture matrix generation), leverage the experimental parallel evaluation capabilities of Determinate Nix (version 3.11.0+).
+If IFD is architecturally unavoidable (e.g. dynamic multi-architecture matrix
+generation), leverage the experimental parallel evaluation capabilities of
+Determinate Nix (version 3.11.0+).
 
 ### System Configuration
 
@@ -167,7 +199,8 @@ extra-experimental-features = parallel-eval
 
 ### Language Optimization
 
-Use the explicit parallel builder construct to instruct the evaluator to evaluate branches concurrently:
+Use the explicit parallel builder construct to instruct the evaluator to
+evaluate branches concurrently:
 
 ```nix
 # Explicitly evaluate heavy IFD expressions concurrently
@@ -181,6 +214,9 @@ builtins.parallel [
 
 ## Verification Checklist
 
-- [ ] Run evaluation with `--option allow-import-from-derivation false` and confirm it succeeds.
-- [ ] Measure evaluation time using the `eval-benchmark.sh` script to verify the speedup.
-- [ ] Ensure that no external builder steps or daemon jobs run during evaluation (i.e. before the build phase actually begins).
+- [ ] Run evaluation with `--option allow-import-from-derivation false` and
+      confirm it succeeds.
+- [ ] Measure evaluation time using the `eval-benchmark.sh` script to verify the
+      speedup.
+- [ ] Ensure that no external builder steps or daemon jobs run during evaluation
+      (i.e. before the build phase actually begins).
