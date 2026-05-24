@@ -235,10 +235,16 @@ in
 
               workspaces = {
                 "1" = {
+                  open-on-output = "DP-7";
+                };
+                "2" = {
+                  open-on-output = "DP-8";
+                };
+                "3" = {
                   open-on-output = "DP-9";
                 };
               }
-              // lib.genAttrs (map toString (lib.range 2 9)) (_: {
+              // lib.genAttrs (map toString (lib.range 4 9)) (_: {
                 open-on-output = "eDP-1";
               });
 

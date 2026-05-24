@@ -25,6 +25,9 @@ in
         lib.optionals config.programs.firefox.enable [
           { sh = mkStartCommand (lib.getExe config.programs.firefox.package); }
         ]
+        ++ lib.optionals config.khanelinix.programs.graphical.editors.emacs.enable [
+          { sh = mkStartCommand (lib.getExe config.programs.emacs.package); }
+        ]
         ++ lib.optionals (osConfig.programs.steam.enable or false) [
           { sh = mkStartCommand "steam"; }
         ]

@@ -16,8 +16,10 @@ in
     wallpapers = mkOpt (types.listOf types.str) [ ] "List of wallpapers to cycle through";
 
     monitors = mkOpt (types.listOf types.str) [
-      "DP-3"
-      "DP-1"
+      "eDP-1"
+      "DP-7"
+      "DP-8"
+      "DP-9"
     ] "Monitors to update";
   };
 

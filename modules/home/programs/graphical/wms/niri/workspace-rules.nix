@@ -25,6 +25,7 @@ in
         })
 
         (mkWorkspaceRule "3" { app-id = "^(code|Code)$"; })
+        (mkWorkspaceRule "3" { app-id = "^emacs$"; })
         (mkWorkspaceRule "3" { app-id = "^neovide$"; })
         (mkWorkspaceRule "3" { app-id = "^(github-desktop|GitHub Desktop)$"; })
         (mkWorkspaceRule "3" { app-id = "^gitkraken$"; })
