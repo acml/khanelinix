@@ -98,7 +98,11 @@ in
 
           browserCommand = lib.getExe config.programs.firefox.package;
           explorerCommand = "nautilus";
-          notificationCommand = "swaync-client -t -sw";
+          notificationCommand = [
+            "swaync-client"
+            "-t"
+            "-sw"
+          ];
           lookingGlassCommand = "looking-glass-client";
 
           cliphistCommand = "cliphist list | ${dmenuLauncher} | cliphist decode | ${wlCopy}";
@@ -168,7 +172,10 @@ in
         // pickerBind
         // {
           "Mod+Return".action.spawn = "kitty";
-          "Mod+Shift+Return".action.spawn = "kitty zellij";
+          "Mod+Shift+Return".action.spawn = [
+            "kitty"
+            "zellij"
+          ];
           "Mod+B".action.spawn = browserCommand;
           "Mod+Shift+E".action.spawn = explorerCommand;
           "Mod+L".action.spawn = lockCommand;
@@ -176,8 +183,14 @@ in
           "Mod+V".action.spawn = cliphistCommand;
           "Mod+W".action.spawn = lookingGlassCommand;
 
-          "Mod+E".action.spawn = "kitty yazi";
-          "Mod+T".action.spawn = "kitty btop";
+          "Mod+E".action.spawn = [
+            "kitty"
+            "yazi"
+          ];
+          "Mod+T".action.spawn = [
+            "kitty"
+            "btop"
+          ];
 
           "Mod+Q".action.close-window = [ ];
           "Ctrl+Shift+Q".action.close-window = [ ];
@@ -258,10 +271,17 @@ in
             };
           };
 
-          "Mod+I".action.spawn = "notify-send \"niri\" \"No window inspector configured\"";
+          "Mod+I".action.spawn = [
+            "notify-send"
+            "\"niri\" \"No window inspector configured\""
+          ];
           "Mod+Shift+Period".action.spawn = "smile";
 
-          "Ctrl+Shift+B".action.spawn = "killall -SIGUSR1 .waybar-wrapped";
+          "Ctrl+Shift+B".action.spawn = [
+            "killall"
+            "-SIGUSR1"
+            ".waybar-wrapped"
+          ];
 
           "XF86AudioRaiseVolume".action.spawn = [
             "wpctl"
