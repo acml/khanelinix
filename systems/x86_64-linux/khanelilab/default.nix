@@ -1,4 +1,5 @@
 {
+  config,
   lib,
 
   ...
@@ -12,6 +13,7 @@ in
     # ./disks.nix
     ./hardware.nix
     ./networking.nix
+    ./storage.nix
   ];
 
   khanelinix = {
@@ -37,9 +39,12 @@ in
       openssh = enabled;
       rustdesk-server = enabled;
       tailscale = enabled;
+      hermes-agent = {
+        enable = true;
+        # TODO: provide a secrets-backed env file and model defaults before first use.
+        # environmentFiles = [ config.sops.secrets."hermes-env".path ];
+      };
     };
-
-    archetypes.home-lab = enabled;
 
     security = {
       doas = enabled;
@@ -64,6 +69,32 @@ in
 
     suites = {
       common = enabled;
+      media-server = {
+        enable = true;
+        appdataDir = "/mnt/user/appdata";
+        cacheAppdataDir = "/mnt/pool/appdata";
+        mediaDir = "/mnt/user/data/media";
+        dataDir = "/mnt/user/data";
+      };
+      nas = enabled;
+      observability = {
+        enable = true;
+        cacheAppdataDir = "/mnt/pool/appdata";
+      };
+      security = {
+        enable = true;
+        cacheAppdataDir = "/mnt/pool/appdata";
+      };
+      self-hosted = {
+        enable = true;
+        appdataDir = "/mnt/user/appdata";
+        dataDir = "/mnt/user/data";
+      };
+    };
+
+    services.home-assistant = {
+      enable = true;
+      configDir = "/mnt/pool/appdata/home-assistant";
     };
 
     virtualisation = {
@@ -72,6 +103,13 @@ in
         platform = "intel";
       };
       podman = enabled;
+    };
+  };
+
+  sops.secrets = lib.mkIf config.khanelinix.security.sops.enable {
+    "cloudflared/khanelimancom.json" = {
+      key = "cloudflared_json";
+      path = "/run/secrets/cloudflared/khanelimancom.json";
     };
   };
 
