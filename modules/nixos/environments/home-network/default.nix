@@ -14,7 +14,7 @@ in
 {
   options.khanelinix.environments.home-network = with types; {
     enable = lib.mkEnableOption "home network environment";
-    serverHostname = mkOpt str "austinserver.local" "Home server hostname";
+    serverHostname = mkOpt str "austinserver.taild8431e.ts.net" "Home server hostname";
     enableNFSMounts = mkBoolOpt true "Enable NFS mounts to home server";
   };
 
@@ -45,7 +45,6 @@ in
         {
           "/mnt/austinserver/appdata" = "/mnt/user/appdata";
           "/mnt/austinserver/data" = "/mnt/user/data";
-          "/mnt/austinserver/backup" = "/mnt/user/backup";
           "/mnt/austinserver/isos" = "/mnt/user/isos";
           "/mnt/dropbox" = "/mnt/disks/dropbox";
           "/mnt/disks/googledrive" = "/mnt/disks/googledrive";

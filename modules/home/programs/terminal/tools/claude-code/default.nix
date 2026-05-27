@@ -15,6 +15,36 @@ let
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
 
   claudeIcon = ./assets/claude.ico;
+
+  # Codex-style status line: model+reasoning, dir, context usage, 5h limit.
+  # Rate-limit fields only appear for Claude.ai subscribers, so guard for null.
+  statusLineScript = pkgs.writeShellApplication {
+    name = "claude-statusline";
+    runtimeInputs = [ pkgs.jq ];
+    text = ''
+      input=$(cat)
+      jq -r '
+        def pc(v): (v // 0) | floor | tostring;
+        (.model.display_name // "?") as $name |
+        ( "[" + $name
+          + (if ((.model.id // "") | test("\\[1m\\]")) and (($name | ascii_downcase) | test("1m") | not)
+             then " ·1M" else "" end)
+          + (if (.effort.level // "") != "" then " " + .effort.level else "" end)
+          + (if .thinking.enabled == true then " +think" else "" end)
+          + "]" )
+        + " 📁 " + (((.workspace.current_dir // .cwd // "") | split("/") | last))
+        + (if .context_window.used_percentage != null
+           then " | ctx " + pc(.context_window.used_percentage) + "%"
+           else "" end)
+        + (if .rate_limits.five_hour.used_percentage != null
+           then " | 5h " + pc(.rate_limits.five_hour.used_percentage) + "%"
+           else "" end)
+        + (if .rate_limits.seven_day.used_percentage != null
+           then " | 7d " + pc(.rate_limits.seven_day.used_percentage) + "%"
+           else "" end)
+      ' <<<"$input"
+    '';
+  };
 in
 {
   imports = [
@@ -39,8 +69,12 @@ in
 
         hooks = lib.importDir ./hooks { inherit pkgs config lib; };
 
-        # Let default do its job
-        # model = "claude-sonnet-4-6";
+        model = "opus[1m]";
+        effortLevel = "xhigh";
+        alwaysThinkingEnabled = true;
+        # Usage credits
+        # fastMode = true;
+        cleanupPeriodDays = 90;
         verbose = true;
         includeCoAuthoredBy = false;
         gitAttribution = false;
@@ -51,12 +85,13 @@ in
 
         statusLine = {
           type = "command";
-          command = "input=$(cat); echo \"[$(echo \"$input\" | jq -r '.model.display_name')] 📁 $(basename \"$(echo \"$input\" | jq -r '.workspace.current_dir')\")\"";
+          command = lib.getExe statusLineScript;
           padding = 0;
         };
 
         env = {
           USE_BUILTIN_RIPGREP = "0";
+          ANTHROPIC_DEFAULT_HAIKU_MODEL = "claude-haiku-4-5";
         }
         // lib.optionalAttrs mcpModuleEnabled {
           ENABLE_TOOL_SEARCH = "auto:5";

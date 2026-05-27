@@ -18,6 +18,9 @@ let
   inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.khanelinix.programs.graphical.bars.waybar;
+  hasCopilotToken = lib.hasAttrByPath [ "sops" "secrets" "github/copilot-token" ] config;
+  hasSops = config.khanelinix.services.sops.enable or false;
+  hasSopsCopilotToken = hasSops && hasCopilotToken;
 
   generateSettings = import ./lib/settings.nix {
     inherit
@@ -84,20 +87,37 @@ in
           let
             styleDir =
               if config.khanelinix.theme.catppuccin.enable then ./styles/catppuccin else ./styles/base16;
+            codexbarStyle = ''
+              @import url("${pkgs.khanelinix.codexbar-waybar}/share/codexbar-waybar/codexbar.css");
+            '';
             style = builtins.readFile "${styleDir}/style.css";
             controlCenterStyle = builtins.readFile "${styleDir}/control-center.css";
             powerStyle = builtins.readFile "${styleDir}/power.css";
             statsStyle = builtins.readFile "${styleDir}/stats.css";
             workspacesStyle = builtins.readFile "${styleDir}/workspaces.css";
           in
-          "${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
+          "${codexbarStyle}${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
       };
+
+      home.packages = [
+        pkgs.khanelinix.codexbar-waybar
+      ];
+
+      systemd.user.services.waybar.Service.EnvironmentFile =
+        lib.mkIf hasSopsCopilotToken
+          config.sops.templates."waybar-codexbar.env".path;
 
       sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
         weather_config = {
           sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
           path = "${config.home.homeDirectory}/weather_config.json";
         };
+      };
+
+      sops.templates."waybar-codexbar.env" = lib.mkIf hasSopsCopilotToken {
+        content = ''
+          COPILOT_API_TOKEN=${config.sops.placeholder."github/copilot-token"}
+        '';
       };
     })
   ];
