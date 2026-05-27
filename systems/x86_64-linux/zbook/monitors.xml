@@ -8,7 +8,7 @@
       <scale>1</scale>
       <monitor>
         <monitorspec>
-          <connector>DP-8</connector>
+          <connector>DP-6</connector>
           <vendor>HPN</vendor>
           <product>HP E233</product>
           <serial>CNC7500RJ0</serial>
@@ -45,7 +45,7 @@
       <scale>1</scale>
       <monitor>
         <monitorspec>
-          <connector>DP-9</connector>
+          <connector>DP-5</connector>
           <vendor>SAM</vendor>
           <product>SyncMaster</product>
           <serial>HS3Q216349</serial>
@@ -63,7 +63,7 @@
       <scale>1</scale>
       <monitor>
         <monitorspec>
-          <connector>DP-7</connector>
+          <connector>DP-4</connector>
           <vendor>SAM</vendor>
           <product>SyncMaster</product>
           <serial>H1AK500000</serial>

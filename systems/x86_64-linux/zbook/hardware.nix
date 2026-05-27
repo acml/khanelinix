@@ -85,18 +85,18 @@
 
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
       # package = config.boot.kernelPackages.nvidiaPackages.production;
-      # package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-      #   version = "570.133.07";
-      #   # this is the third one it will complain is wrong
-      #   sha256_64bit = "sha256-LUPmTFgb5e9VTemIixqpADfvbUX1QoTT2dztwI3E3CY=";
-      #   # unused
-      #   sha256_aarch64 = "sha256-2l8N83Spj0MccA8+8R1uqiXBS0Ag4JrLPjrU3TaXHnM=";
-      #   # this is the second one it will complain is wrong
-      #   openSha256 = "sha256-9l8N83Spj0MccA8+8R1uqiXBS0Ag4JrLPjrU3TaXHnM=";
-      #   # this is the first one it will complain is wrong
-      #   settingsSha256 = "sha256-XMk+FvTlGpMquM8aE8kgYK2PIEszUZD2+Zmj2OpYrzU=";
-      #   persistencedSha256 = "sha256-G1V7JtHQbfnSRfVjz/LE2fYTlh9okpCbE4dfX9oYSg8=";
-      # };
+      package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
+        version = "610.43.02";
+        # this is the third one it will complain is wrong
+        sha256_64bit = "sha256:0qvllxnb20arjhw3bxdz0hw521di9ib75hldzx97gpscpdaa0d1h";
+        # unused
+        sha256_aarch64 = "sha256:0qvllxnb20arjhw3bxdz0hw521di9ib75hldzx97gpscpdaa0d1h";
+        # this is the second one it will complain is wrong
+        openSha256 = "sha256-hP5NVZZ4vGsACHLmUDKq4uckpd/kn1GxCSYnnJfAuBs=";
+        # this is the first one it will complain is wrong
+        settingsSha256 = "sha256-0YAhufRgjDW+uR+kjaTb154fibpcDw8QowfrucoZsKE=";
+        persistencedSha256 = "sha256-Whgv9X+v2fRhzliOl2LzltY9v1SxDafFfv3IUPqj/hk=";
+      };
 
       # Nvidia Optimus PRIME. It is a technology developed by Nvidia to optimize
       # the power consumption and performance of laptops equipped with their GPUs.

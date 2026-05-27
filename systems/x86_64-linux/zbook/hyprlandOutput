@@ -1,20 +1,20 @@
-# monitor=DP-8,	1920x1080@60,	1920x0,	1, bitdepth, 10
+# monitor=DP-6,	1920x1080@60,	1920x0,	1, bitdepth, 10
 monitorv2 {
-  output = DP-7
+  output = DP-4
   mode = 1920x1080@60
   position = 0x0
   scale = 1
 }
 
 monitorv2 {
-  output = DP-8
+  output = DP-6
   mode = 1920x1080@60
   position = 1920x0
   scale = 1
 }
 
 monitorv2 {
-  output = DP-9
+  output = DP-5
   mode = preferred
   position = 3840x0
   scale = 1

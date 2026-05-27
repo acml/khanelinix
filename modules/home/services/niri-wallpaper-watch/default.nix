@@ -17,9 +17,9 @@ in
 
     monitors = mkOpt (types.listOf types.str) [
       "eDP-1"
-      "DP-7"
-      "DP-8"
-      "DP-9"
+      "DP-4"
+      "DP-6"
+      "DP-5"
     ] "Monitors to update";
   };
 

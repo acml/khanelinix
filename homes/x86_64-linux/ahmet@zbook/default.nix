@@ -36,9 +36,9 @@ in
               "eDP-1"
             ];
             condensedOutputs = [
-              "DP-7"
-              "DP-8"
-              "DP-9"
+              "DP-4"
+              "DP-6"
+              "DP-5"
             ];
           };
           waybar = {
@@ -48,9 +48,9 @@ in
               "eDP-1"
             ];
             condensedOutputs = [
-              "DP-7"
-              "DP-8"
-              "DP-9"
+              "DP-4"
+              "DP-6"
+              "DP-5"
             ];
           };
         };
@@ -91,17 +91,17 @@ in
             settings = {
               monitor = [
                 {
-                  output = "DP-7";
+                  output = "DP-4";
                   mode = "preferred";
                   position = "0x0";
                 }
                 {
-                  output = "DP-8";
+                  output = "DP-6";
                   mode = "preferred";
                   position = "1920x0";
                 }
                 {
-                  output = "DP-9";
+                  output = "DP-5";
                   mode = "preferred";
                   position = "3840x0";
                 }
@@ -115,19 +115,19 @@ in
               workspace_rule = [
                 {
                   workspace = "8";
-                  monitor = "DP-7";
+                  monitor = "DP-4";
                   persistent = true;
                   default = true;
                 }
                 {
                   workspace = "9";
-                  monitor = "DP-8";
+                  monitor = "DP-6";
                   persistent = true;
                   default = true;
                 }
                 {
                   workspace = "10";
-                  monitor = "DP-9";
+                  monitor = "DP-5";
                   persistent = true;
                 }
                 {
@@ -179,8 +179,8 @@ in
 
             settings = {
               outputs = {
-                "DP-7" = {
-                  name = "DP-7";
+                "DP-4" = {
+                  name = "DP-4";
                   mode = {
                     width = 1920;
                     height = 1080;
@@ -192,8 +192,8 @@ in
                   };
                 };
 
-                "DP-8" = {
-                  name = "DP-8";
+                "DP-6" = {
+                  name = "DP-6";
                   mode = {
                     width = 1920;
                     height = 1080;
@@ -205,8 +205,8 @@ in
                   };
                 };
 
-                "DP-9" = {
-                  name = "DP-9";
+                "DP-5" = {
+                  name = "DP-5";
                   mode = {
                     width = 1680;
                     height = 1050;
@@ -235,13 +235,13 @@ in
 
               workspaces = {
                 "1" = {
-                  open-on-output = "DP-7";
+                  open-on-output = "DP-4";
                 };
                 "2" = {
-                  open-on-output = "DP-8";
+                  open-on-output = "DP-6";
                 };
                 "3" = {
-                  open-on-output = "DP-9";
+                  open-on-output = "DP-5";
                 };
               }
               // lib.genAttrs (map toString (lib.range 4 9)) (_: {
@@ -260,15 +260,15 @@ in
 
             settings = {
               output = {
-                "DP-7" = {
+                "DP-4" = {
                   resolution = "1920x1080";
                   position = "0,0";
                 };
-                "DP-8" = {
+                "DP-6" = {
                   resolution = "1920x1080";
                   position = "1920,0";
                 };
-                "DP-9" = {
+                "DP-5" = {
                   resolution = "1680x1050";
                   position = "3840,0";
                 };
@@ -281,7 +281,7 @@ in
               workspaceOutputAssign = [
                 {
                   workspace = "1";
-                  output = "DP-7";
+                  output = "DP-4";
                 }
                 {
                   workspace = "2";
@@ -289,11 +289,11 @@ in
                 }
                 {
                   workspace = "3";
-                  output = "DP-8";
+                  output = "DP-6";
                 }
                 {
                   workspace = "4";
-                  output = "DP-9";
+                  output = "DP-5";
                 }
                 {
                   workspace = "5";
@@ -350,15 +350,15 @@ in
       hyprpaper = {
         monitors = [
           {
-            name = "DP-7";
+            name = "DP-4";
             wallpaper = wallpaperPath wallpaperCfg.secondary;
           }
           {
-            name = "DP-8";
+            name = "DP-6";
             wallpaper = wallpaperPath wallpaperCfg.secondary;
           }
           {
-            name = "DP-9";
+            name = "DP-5";
             wallpaper = wallpaperPath wallpaperCfg.secondary;
           }
           {
@@ -463,9 +463,9 @@ in
       };
     in
     [
-      (mkBackground "DP-7" wallpaperCfg.secondary)
-      (mkBackground "DP-8" wallpaperCfg.secondary)
-      (mkBackground "DP-9" wallpaperCfg.secondary)
+      (mkBackground "DP-4" wallpaperCfg.secondary)
+      (mkBackground "DP-6" wallpaperCfg.secondary)
+      (mkBackground "DP-5" wallpaperCfg.secondary)
       (mkBackground "eDP-1" wallpaperCfg.primary)
     ]
   );
