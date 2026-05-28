@@ -1,5 +1,6 @@
 /**
-  This file is used by nixd's expressions to find the current flake.
+  Flake-detection helper for nixd's `options`/`nixpkgs` exprs. Shared by the
+  Claude Code and opencode LSP configs (see modules/common/nixd/default.nix).
 
   Ported from khanelivim (modules/nixvim/lsp/_nixd-expr.nix), originally
   yoinked from MattSturgeon/nix-config commit

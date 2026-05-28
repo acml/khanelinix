@@ -23,7 +23,6 @@ in
     autoSuspend = mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
     defaultSession = mkOpt (nullOr str) null "The default session to use.";
     monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";
-    wayland = mkBoolOpt true "Whether or not to use Wayland.";
   };
 
   config = mkIf cfg.enable {
