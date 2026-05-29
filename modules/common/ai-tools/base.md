@@ -40,7 +40,8 @@ easy to verify.
   fancy, emotional, or decorative language and communicate only the important
   context.
 - Batch independent tool calls and file reads when possible. Prefer `rg`,
-  structured queries, and existing project commands over manual inspection loops.
+  structured queries, and existing project commands over manual inspection
+  loops.
 - Do not paste noisy command output or repeat status updates. Summarize only the
   important result, failure, or next decision unless exact output is requested.
 - Avoid repeating expensive command/read/write loops. When a task needs the same
