@@ -3,7 +3,7 @@
   inputs,
   lib,
   pkgs,
-  getPkgsUnstable,
+  getPkgsMaster,
 
   ...
 }:
@@ -94,16 +94,13 @@ in
 
     programs.firefox =
       let
-        pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
+        pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
       in
       {
         # Firefox configuration and policies
         # See: https://mozilla.github.io/policy-templates/
         enable = true;
-        package = pkgsUnstable.firefox-devedition;
-
-        # TODO: remove after stateVersion bump
-        configPath = lib.mkIf pkgs.stdenv.hostPlatform.isLinux "${config.xdg.configHome}/mozilla/firefox";
+        package = pkgsMaster.firefox-devedition;
 
         darwinDefaultsId =
           if config.programs.firefox.package.pname == "firefox-devedition" then
