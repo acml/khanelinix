@@ -21,14 +21,14 @@ in
           #Browsers - Move all Firefox windows to workspace 2 by default
           {
             match.class = firefoxClass;
-            workspace = "9";
+            workspace = "2";
           }
           # Secondary Monitor Media
           # Exception rule to override the above rule - Media sites go to workspace 1
           {
             match.class = firefoxClass;
             match.title = mediaTitle;
-            workspace = "10";
+            workspace = "1";
           }
 
           {
@@ -38,7 +38,7 @@ in
           }
           # Code
           {
-            match.class = "^(Code|emacs|neovide|GitHub Desktop|GitKraken|robloxstudiobeta.exe)$";
+            match.class = "^(Code|neovide|GitHub Desktop|GitKraken|robloxstudiobeta.exe)$";
             workspace = "3";
           }
           # Gaming
@@ -124,40 +124,45 @@ in
 
         on =
           let
-            routeFirefoxWindows =
+            # Route only the window that fired the event. Sweeping all windows
+            # (hl.get_windows) meant any window's open/title event relocated
+            # Firefox windows, e.g. launching Battle.net yanked a media tab to ws1.
+            routeFirefoxWindow =
               allowDefaultRoute:
               lib.generators.mkLuaInline ''
-                function()
-                  for _, window in ipairs(hl.get_windows()) do
-                    local class = string.lower(window.class or "")
-                    if class == "firefox" or class == "firefox-devedition" then
-                      local title = string.lower(window.title or "")
-                      local target = "9"
+                function(window)
+                  if window == nil or type(window) ~= "table" then
+                    return
+                  end
 
-                      if title:find("hidden tabs %- workona") then
-                        target = "special:inactive"
-                      elseif title:find("twitch") or title:find("tntdrama") or title:find("youtube") or title:find("bally sports") or title:find("video entertainment") or title:find("plex") then
-                        target = "1"
-                      end
+                  local class = string.lower(window.class or "")
+                  if class ~= "firefox" and class ~= "firefox-devedition" then
+                    return
+                  end
 
-                      local shouldRoute = true
+                  local title = string.lower(window.title or "")
+                  local target = "2"
 
-                      if target == "9" and ${lib.boolToString (!allowDefaultRoute)} then
-                        shouldRoute = false
-                      end
+                  if title:find("hidden tabs %- workona") then
+                    target = "special:inactive"
+                  elseif title:find("twitch") or title:find("tntdrama") or title:find("youtube") or title:find("bally sports") or title:find("video entertainment") or title:find("plex") then
+                    target = "1"
+                  end
 
-                      if target ~= "9" and window.workspace ~= nil and window.workspace.name ~= "9" then
-                        shouldRoute = false
-                      end
+                  if target == "2" and ${lib.boolToString (!allowDefaultRoute)} then
+                    return
+                  end
 
-                      if shouldRoute and (window.workspace == nil or window.workspace.name ~= target) then
-                        hl.dispatch(hl.dsp.window.move({
-                          workspace = target,
-                          follow = false,
-                          window = "address:" .. window.address,
-                        }))
-                      end
-                    end
+                  if target ~= "2" and window.workspace ~= nil and window.workspace.name ~= "2" then
+                    return
+                  end
+
+                  if window.workspace == nil or window.workspace.name ~= target then
+                    hl.dispatch(hl.dsp.window.move({
+                      workspace = target,
+                      follow = false,
+                      window = "address:" .. window.address,
+                    }))
                   end
                 end
               '';
@@ -167,13 +172,13 @@ in
               {
                 _args = [
                   "window.open"
-                  (routeFirefoxWindows true)
+                  (routeFirefoxWindow true)
                 ];
               }
               {
                 _args = [
                   "window.title"
-                  (routeFirefoxWindows false)
+                  (routeFirefoxWindow false)
                 ];
               }
             ]

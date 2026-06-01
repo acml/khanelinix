@@ -4,7 +4,6 @@
   lib,
   pkgs,
   getPkgsMaster,
-
   ...
 }:
 let
@@ -100,7 +99,11 @@ in
         # Firefox configuration and policies
         # See: https://mozilla.github.io/policy-templates/
         enable = true;
-        package = pkgsMaster.firefox-devedition;
+        package =
+          if pkgs.stdenv.hostPlatform.isDarwin then
+            pkgsMaster.firefox-devedition
+          else
+            pkgsMaster.firefox-devedition;
 
         darwinDefaultsId =
           if config.programs.firefox.package.pname == "firefox-devedition" then

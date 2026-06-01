@@ -24,6 +24,9 @@
   system,
   hostname,
   username ? "khaneliman",
+  matchingHomes ? null,
+  darwinModules ? null,
+  sharedHomeModules ? null,
   modules ? [ ],
   ...
 }:
@@ -32,25 +35,35 @@ let
   common = import ./common.nix { inherit inputs; };
 
   extendedLib = common.mkExtendedLib flake inputs.nixpkgs-unstable;
+  baseDarwinModules =
+    if darwinModules == null then
+      (extendedLib.importModulesRecursive ../../modules/darwin)
+    else
+      darwinModules;
   inputPackageSets = common.mkInputPackageSets {
     inherit flake system;
   };
-  matchingHomes = common.mkHomeConfigs {
-    inherit
-      flake
-      system
-      hostname
-      ;
-  };
+  resolvedMatchingHomes =
+    if matchingHomes == null then
+      common.mkHomeConfigs {
+        inherit
+          flake
+          system
+          hostname
+          ;
+      }
+    else
+      matchingHomes;
   homeManagerConfig = common.mkHomeManagerConfig {
     inherit
       extendedLib
       inputs
       system
       hostname
-      matchingHomes
       inputPackageSets
+      sharedHomeModules
       ;
+    matchingHomes = resolvedMatchingHomes;
     isNixOS = false;
   };
 in
@@ -86,7 +99,7 @@ inputs.nix-darwin.lib.darwinSystem {
 
     # Import all darwin modules recursively
   ]
-  ++ (extendedLib.importModulesRecursive ../../modules/darwin)
+  ++ baseDarwinModules
   ++ [
     ../../systems/${system}/${hostname}
   ]
