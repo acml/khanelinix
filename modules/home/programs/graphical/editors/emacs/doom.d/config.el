@@ -75,7 +75,7 @@
 
       fancy-splash-image (funcall
                           (lambda (choices) (elt
-                                        choices (random (length choices))))
+                                             choices (random (length choices))))
                           (directory-files (concat (expand-file-name
                                                     doom-user-dir) "splash")
                                            t "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)" t))
@@ -281,7 +281,7 @@
 ;; Runs ‘dired-auto-readme-mode‘ only when dirvish-side isn’t the active window.
 (defadvice! acml/dired-auto-readme-mode (fn &rest args)
   :around #'dired-auto-readme-mode
-  (let ((visible (dirvish-side--session-visible-p)))
+  (let ((visible (dirvish-side-session-visible-p)))
     (unless (eq visible (selected-window))
       (apply fn args))))
 
